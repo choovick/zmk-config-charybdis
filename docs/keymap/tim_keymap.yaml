@@ -1,4 +1,4 @@
-layout: {zmk_keyboard: charybdis, layout_name: default_transform}
+layout: { zmk_keyboard: charybdis, layout_name: default_transform }
 layers:
   BASE:
   - '`'
@@ -26,19 +26,19 @@ layers:
   - P
   - '='
   - ESC
-  - {t: A, h: LCTRL}
-  - {t: S, h: LALT}
-  - {t: D, h: LGUI}
-  - {t: F, h: LSHIFT}
+  - { t: A, h: LCTRL }
+  - { t: S, h: LALT }
+  - { t: D, h: LGUI }
+  - { t: F, h: LSHIFT }
   - G
   - H
-  - {t: J, h: RSHIFT}
-  - {t: K, h: RGUI}
-  - {t: L, h: RALT}
-  - {t: ;, h: RCTRL}
+  - { t: J, h: RSHIFT }
+  - { t: K, h: RGUI }
+  - { t: L, h: RALT }
+  - { t: ;, h: RCTRL }
   - ''''
   - LSHIFT
-  - {t: Z, h: ADJ}
+  - { t: Z, h: ADJ }
   - X
   - C
   - V
@@ -47,16 +47,16 @@ layers:
   - M
   - ','
   - .
-  - {t: /, h: ADJ}
+  - { t: /, h: ADJ }
   - RSHIFT
-  - {t: TAB, h: NAV}
+  - { t: TAB, h: NAV }
   - BACKSPACE
   - LGUI
   - SPACE
   - DEL
   - ENTER
   - SPACE
-  - {t: BACKSPACE, h: SYM}
+  - { t: BACKSPACE, h: SYM }
   NAV:
   - F12
   - F1
@@ -70,7 +70,7 @@ layers:
   - F9
   - F10
   - F11
-  - {t: ▽, type: trans}
+  - { t: ▽, type: trans }
   - SCROLLLOCK
   - PAUSE BREAK
   - UP
@@ -81,7 +81,7 @@ layers:
   - '8'
   - '9'
   - KP PLUS
-  - {t: ▽, type: trans}
+  - { t: ▽, type: trans }
   - PRINTSCREEN
   - INSERT
   - LEFT
@@ -94,7 +94,7 @@ layers:
   - '6'
   - KP MINUS
   - KP DIVIDE
-  - {t: ▽, type: trans}
+  - { t: ▽, type: trans }
   - DEL
   - PG UP
   - CAPS
@@ -105,12 +105,12 @@ layers:
   - '2'
   - '3'
   - KP MULTIPLY
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
   - VOLUME DOWN
   - VOLUME UP
-  - {t: ▽, type: trans}
+  - { t: ▽, type: trans }
   - KP DOT
   - '0'
   - ADJ
@@ -127,7 +127,7 @@ layers:
   - F9
   - F10
   - F11
-  - {t: ▽, type: trans}
+  - { t: ▽, type: trans }
   - '!'
   - '@'
   - '#'
@@ -138,8 +138,8 @@ layers:
   - '*'
   - '?'
   - ''''
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
   - +
   - '='
   - (
@@ -150,8 +150,8 @@ layers:
   - ']'
   - '{'
   - '}'
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
   - <
   - '|'
   - '-'
@@ -162,15 +162,15 @@ layers:
   - /
   - '~'
   - ;
-  - {t: ▽, type: trans}
+  - { t: ▽, type: trans }
   - ADJ
-  - {t: ▽, type: trans}
+  - { t: ▽, type: trans }
   - VOLUME DOWN
   - VOLUME UP
-  - {t: ▽, type: trans}
-  - {t: FAST FORWARD, h: toggle}
+  - { t: ▽, type: trans }
+  - { t: FAST FORWARD, h: toggle }
   - PLAY PAUSE
-  - {t: ▽, type: trans}
+  - { t: ▽, type: trans }
   ADJ:
   - F12
   - F1
@@ -184,164 +184,164 @@ layers:
   - F9
   - F10
   - F11
-  - {t: ▽, type: trans}
+  - { t: ▽, type: trans }
   - '&sys_reset'
   - BT PRV
   - BT NXT
   - BT CLR
   - OUT TOG
-  - {t: BT, h: '0'}
+  - { t: BT, h: '0' }
   - BT CLR
   - BT PRV
   - BT NXT
   - '&sys_reset'
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
   - '&bootloader'
   - PREVIOUS
   - PLAY PAUSE
   - NEXT
   - MUTE
-  - {t: BT, h: '1'}
+  - { t: BT, h: '1' }
   - '&mkp MB1'
   - '&mkp MB2'
   - '&mkp MB3'
   - '&bootloader'
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
   - SCROLL
   - SNIP
   - VOLUME DOWN
   - VOLUME UP
-  - {t: BT, h: '2'}
-  - {t: ▽, type: trans}
+  - { t: BT, h: '2' }
+  - { t: ▽, type: trans }
   - SNIP
   - SCROLL
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
   SNIP:
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
   - '&mkp MB1'
   - '&mkp MB2'
   - '&mkp MB3'
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
   - SCROLL
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
   - SCROLL
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
   SCROLL:
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
   - '&mkp MB1'
   - '&mkp MB2'
   - '&mkp MB3'
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
+  - { t: ▽, type: trans }
 combos:
-- p: [0, 1]
+- p: [ 0, 1 ]
   k: ESC
