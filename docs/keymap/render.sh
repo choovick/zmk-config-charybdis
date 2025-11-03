@@ -13,16 +13,16 @@ echo "🎨 Rendering Charybdis keymap..."
 # Parse the ZMK keymap file
 echo "📝 Parsing keymap from config/charybdis.keymap..."
 keymap -c "$SCRIPT_DIR/config.yaml" parse -z "$PROJECT_ROOT/config/charybdis.keymap" \
-    -b "$SCRIPT_DIR/tim_keymap.yaml" > "$SCRIPT_DIR/tim_keymap_parsed.yaml"
+    -b "$SCRIPT_DIR/keymap.yaml" > "$SCRIPT_DIR/keymap_parsed.yaml"
 
 # Draw the SVG using the physical layout JSON
 echo "🖼️  Drawing SVG with physical layout..."
-keymap -c "$SCRIPT_DIR/config.yaml" draw "$SCRIPT_DIR/tim_keymap_parsed.yaml" \
-    -j "$PROJECT_ROOT/config/info.json" > "$SCRIPT_DIR/tim_keymap.svg"
+keymap -c "$SCRIPT_DIR/config.yaml" draw "$SCRIPT_DIR/keymap_parsed.yaml" \
+    -j "$PROJECT_ROOT/config/info.json" > "$SCRIPT_DIR/keymap.svg"
 # Remove the parsed YAML file
 echo "🧹 Removing parsed YAML file..."
-rm "$SCRIPT_DIR/tim_keymap_parsed.yaml"
+rm "$SCRIPT_DIR/keymap_parsed.yaml"
 
 
-echo "✅ Done! Output saved to docs/keymap/tim_keymap.svg"
+echo "✅ Done! Output saved to docs/keymap/keymap.svg"
 
