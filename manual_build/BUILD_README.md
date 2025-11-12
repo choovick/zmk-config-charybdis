@@ -42,21 +42,34 @@ The script will:
 
 1. charybdis_left (nice_nano_v2)
 
-2. charybdis_right (nice_nano_v2)
+2. charybdis_right_standalone (nice_nano_v2)
    └─ Snippet: studio-rpc-usb-uart
    └─ CMake args: -DCONFIG_ZMK_STUDIO=y
 
-3. settings_reset (nice_nano_v2)
+3. charybdis_right_dongle (nice_nano_v2)
 
-Select build configuration (1-3) or 'q' to quit:
+4. prospector_dongle prospector_adapter (seeeduino_xiao_ble)
+   └─ Snippet: studio-rpc-usb-uart
+   └─ CMake args: -DCONFIG_ZMK_STUDIO=y
+
+5. settings_reset (nice_nano_v2)
+
+6. settings_reset (seeeduino_xiao_ble)
+
+Select build configuration (1-6) or 'q' to quit:
 ```
 
 ## Output Location
 
 Built firmware files will be in:
 - `manual_build/artifacts/charybdis-left/zephyr/zmk.uf2`
-- `manual_build/artifacts/charybdis-right/zephyr/zmk.uf2`
+- `manual_build/artifacts/charybdis-right-standalone/zephyr/zmk.uf2`
+- `manual_build/artifacts/charybdis-right-dongle/zephyr/zmk.uf2`
+- `manual_build/artifacts/prospector-dongle-prospector-adapter/zephyr/zmk.uf2`
 - `manual_build/artifacts/settings-reset/zephyr/zmk.uf2`
+
+Additionally, firmware is automatically copied to:
+- `manual_build/artifacts/output/*.uf2` with clean names
 
 All build artifacts (including downloaded ZMK source, Zephyr, modules, etc.) are contained within the `manual_build/` directory to keep your repository clean.
 

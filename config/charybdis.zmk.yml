@@ -9,4 +9,6 @@ features:
   - QWERTY
 siblings:
   - charybdis_left
-  - charybdis_right
+  - charybdis_right_standalone
+  - charybdis_right_dongle
+  - prospector_dongle

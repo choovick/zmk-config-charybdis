@@ -64,17 +64,17 @@ zmk-config-charybdis/
 │   │           ├── charybdis_right_common.dtsi           # Shared right keyboard hardware config
 │   │           ├── charybdis_left.conf                   # Left side Kconfig options (empty)
 │   │           ├── charybdis_left.overlay                # Left side device tree overlay
-│   │           ├── charybdis_right.conf                  # Right side Kconfig (shared via symlink)
-│   │           ├── charybdis_right.overlay               # Right side overlay (standalone mode)
-│   │           ├── charybdis_right_peripheral.conf       # Symlink → charybdis_right.conf
-│   │           ├── charybdis_right_peripheral.overlay    # Right side overlay (dongle mode)
-│   │           ├── charybdis_dongle.conf                 # Dongle Kconfig options
-│   │           ├── charybdis_dongle.overlay              # Dongle device tree overlay
+│   │           ├── charybdis_right_standalone.conf       # Right side Kconfig (standalone mode)
+│   │           ├── charybdis_right_standalone.overlay    # Right side overlay (standalone mode)
+│   │           ├── charybdis_right_dongle.conf           # Symlink → charybdis_right_standalone.conf
+│   │           ├── charybdis_right_dongle.overlay        # Right side overlay (dongle mode)
+│   │           ├── prospector_dongle.conf                # Prospector dongle Kconfig options
+│   │           ├── prospector_dongle.overlay             # Prospector dongle device tree overlay
 │   │           ├── Kconfig.defconfig                     # Shield Kconfig definitions
 │   │           └── Kconfig.shield                        # Shield Kconfig options
 │   ├── charybdis.conf               # Global ZMK configuration
 │   ├── charybdis.keymap             # Keymap definition file
-│   ├── charybdis.zmk.yml           # ZMK build configuration
+│   ├── charybdis.zmk.yml            # ZMK build configuration
 │   ├── info.json                    # Repository metadata
 │   └── west.yml                     # West manifest (see West.yml section below)
 ├── manual_build/                    # Local build scripts
@@ -84,10 +84,10 @@ zmk-config-charybdis/
 │   ├── bom/                         # Bill of Materials
 │   │   └── readme.md
 │   ├── keymap/                      # Keymap documentation
-│   │   ├── config.yaml
-│   │   ├── keymap.svg               # Visual keymap representation
-│   │   ├── keymap.yaml
-│   │   └── render.sh                # Script to render keymap
+│   │   ├── config.yaml              # Keymap drawer configuration
+│   │   ├── keymap.yaml              # Base keymap definition
+│   │   ├── keymap.svg               # Generated: Visual keymap (created by render.sh)
+│   │   └── render.sh                # Script to parse keymap and generate SVG
 │   └── picture/                     # Images
 │       └── wireless-charybdis.png
 ├── build.yaml                       # GitHub Actions build configuration
@@ -100,15 +100,15 @@ zmk-config-charybdis/
 - **`charybdis_layers.h`**: Layer definitions (BASE, POINTER, LOWER, RAISE, SYMBOLS, SCROLL, SNIPING) used across all shields
 - **`charybdis_trackball_processors.dtsi`**: Shared trackball input processing configurations (snipe/scroll/move modes)
 - **`charybdis_right_common.dtsi`**: Common hardware config for both right keyboard variants (GPIO, SPI, trackball device)
-- **`charybdis_right_peripheral.conf`**: Symlink to `charybdis_right.conf` (identical hardware config)
+- **`charybdis_right_dongle.conf`**: Symlink to `charybdis_right_standalone.conf` (identical hardware config)
 
 #### Shield-Specific Files
 - **`config/charybdis.keymap`**: Defines all key layers, behaviors, and bindings
 - **`config/charybdis.dtsi`**: Shared device tree definitions (keyboard matrix, kscan, physical layout)
 - **`charybdis_left.overlay`**: Left side configuration (same for both modes)
-- **`charybdis_right.overlay`**: Right side for **standalone mode** (processes trackball locally)
-- **`charybdis_right_peripheral.overlay`**: Right side for **dongle mode** (forwards trackball to dongle)
-- **`charybdis_dongle.overlay`**: Dongle configuration (receives trackball from right peripheral)
+- **`charybdis_right_standalone.overlay`**: Right side for **standalone mode** (processes trackball locally)
+- **`charybdis_right_dongle.overlay`**: Right side for **dongle mode** (forwards trackball to dongle)
+- **`prospector_dongle.overlay`**: Prospector dongle configuration (receives trackball from right peripheral)
 - **`config/west.yml`**: Defines external dependencies (see West.yml section below)
 
 ## Operating Modes
@@ -292,15 +292,15 @@ ZMK Studio support is enabled by default via the build configuration in [`build.
 **Standalone mode** - Right keyboard has ZMK Studio:
 ```yaml
 - board: nice_nano_v2
-  shield: charybdis_right
+  shield: charybdis_right_standalone
   snippet: studio-rpc-usb-uart
   cmake-args: -DCONFIG_ZMK_STUDIO=y
 ```
 
-**Dongle mode** - Dongle has ZMK Studio:
+**Dongle mode** - Prospector dongle has ZMK Studio:
 ```yaml
 - board: seeeduino_xiao_ble
-  shield: charybdis_dongle prospector_adapter
+  shield: prospector_dongle prospector_adapter
   snippet: studio-rpc-usb-uart
   cmake-args: -DCONFIG_ZMK_STUDIO=y
 ```
@@ -322,10 +322,10 @@ This combo is defined in [`config/charybdis.keymap`](/config/charybdis.keymap) a
 ### GitHub Actions (Automatic)
 Push changes to your repository and GitHub Actions will automatically build firmware for all configurations defined in [`build.yaml`](/build.yaml). Firmware files will be available in the Actions artifacts as a `firmware.zip` file containing:
 
-- `charybdis_dongle prospector_adapter-seeeduino_xiao_ble-zmk.uf2`
 - `charybdis_left-nice_nano_v2-zmk.uf2`
-- `charybdis_right-nice_nano_v2-zmk.uf2`
-- `charybdis_right_peripheral-nice_nano_v2-zmk.uf2`
+- `charybdis_right_standalone-nice_nano_v2-zmk.uf2`
+- `charybdis_right_dongle-nice_nano_v2-zmk.uf2`
+- `prospector_dongle prospector_adapter-seeeduino_xiao_ble-zmk.uf2`
 - `settings_reset-nice_nano_v2-zmk.uf2`
 - `settings_reset-seeeduino_xiao_ble-zmk.uf2`
 
@@ -334,14 +334,14 @@ For local building using Docker, see [`manual_build/BUILD_README.md`](/manual_bu
 
 The interactive build script provides options for:
 1. **charybdis_left** - Left keyboard (works with both modes)
-2. **charybdis_right** - Right keyboard for standalone mode (Nice!Nano v2)
-3. **charybdis_right_peripheral** - Right keyboard for dongle mode (Nice!Nano v2)
-4. **charybdis_dongle** - Dongle with display (Seeeduino XIAO BLE)
+2. **charybdis_right_standalone** - Right keyboard for standalone mode (Nice!Nano v2)
+3. **charybdis_right_dongle** - Right keyboard for dongle mode (Nice!Nano v2)
+4. **prospector_dongle prospector_adapter** - Dongle with display (Seeeduino XIAO BLE)
 5. **settings_reset** - Reset stored settings
 
-⚠️ **Known Issue:** Option 4 (charybdis_dongle with prospector_adapter) currently fails in local builds due to module patching requirements. Options 1-3 and 5 work correctly. **Use GitHub Actions for dongle builds** or consider using [act](https://github.com/nektos/act) to run the GitHub Actions workflow locally.
+⚠️ **Known Issue:** Option 4 (prospector_dongle with prospector_adapter) currently fails in local builds due to module patching requirements. Options 1-3 and 5 work correctly. **Use GitHub Actions for dongle builds** or consider using [act](https://github.com/nektos/act) to run the GitHub Actions workflow locally.
 
-Built firmware files are automatically copied to `manual_build/artifacts/output/` with descriptive names like `charybdis-dongle-seeeduino-xiao-ble.uf2`.
+Built firmware files are automatically copied to `manual_build/artifacts/output/` with descriptive names.
 
 ## Flashing Firmware
 
@@ -355,14 +355,14 @@ Built firmware files are automatically copied to `manual_build/artifacts/output/
 **First time or changing modes: Reset settings first**
 1. Flash `settings_reset-nice_nano_v2-zmk.uf2` to **both** keyboards
 2. Flash `charybdis_left-nice_nano_v2-zmk.uf2` to the left keyboard
-3. Flash `charybdis_right-nice_nano_v2-zmk.uf2` to the right keyboard
+3. Flash `charybdis_right_standalone-nice_nano_v2-zmk.uf2` to the right keyboard
 4. The keyboards will automatically pair with each other
 
 ### Dongle Mode
 **First time or changing modes: Reset settings first**
 1. Flash `settings_reset-nice_nano_v2-zmk.uf2` to **both** keyboards
 2. Flash `settings_reset-seeeduino_xiao_ble-zmk.uf2` to the **dongle**
-3. Flash `charybdis_left-nice_nano_v2-zmk.uf2` to the left keyboard
-4. Flash `charybdis_right_peripheral-nice_nano_v2-zmk.uf2` to the right keyboard
-5. Flash `charybdis_dongle prospector_adapter-seeeduino_xiao_ble-zmk.uf2` to the dongle
+3. Flash `prospector_dongle prospector_adapter-seeeduino_xiao_ble-zmk.uf2` to the dongle
+4. Flash `charybdis_left-nice_nano_v2-zmk.uf2` to the left keyboard
+5. Flash `charybdis_right_dongle-nice_nano_v2-zmk.uf2` to the right keyboard
 6. **Important**: Pair the left keyboard to the dongle first, then pair the right keyboard

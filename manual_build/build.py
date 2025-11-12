@@ -103,7 +103,7 @@ def build_docker_command(build_config, workspace_path):
     # Add config directory so ZMK can find custom shields
     build_cmd_parts.append(f"-DZMK_CONFIG=/workspace/config")
 
-    # Add shield (quoted to handle shields with spaces like "charybdis_dongle prospector_adapter")
+    # Add shield (quoted to handle shields with spaces like "prospector_dongle prospector_adapter")
     build_cmd_parts.append(f'-DSHIELD="{shield}"')
 
     # Add cmake args if present

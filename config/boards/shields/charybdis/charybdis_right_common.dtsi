@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  *
  * Common hardware configuration for Charybdis right keyboard variants
- * Shared between charybdis_right (standalone) and charybdis_right_peripheral (dongle mode)
+ * Shared between charybdis_right_standalone and charybdis_right_dongle
  */
 
 #include "charybdis.dtsi"
