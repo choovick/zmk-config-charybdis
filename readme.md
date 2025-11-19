@@ -44,7 +44,7 @@ This configuration supports two modes:
 
 ## BOM
 
-Here is the BOM for this project (outdated): [BOM Charybdis 4x6 Wireless](/docs/bom/readme.md)
+Here is the BOM for this project: [BOM Charybdis 4x6 Wireless](/docs/bom/readme.md)
 
 ### Additional Components for Dongle Mode
 - 1x Seeeduino XIAO BLE (nRF52840) - Dongle central
