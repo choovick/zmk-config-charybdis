@@ -21,7 +21,7 @@ This configuration supports two modes:
     - [Dongle Mode](#dongle-mode)
     - [Dongle Display Features](#dongle-display-features)
       - [Prospector Dongle (Seeeduino XIAO BLE)](#prospector-dongle-seeeduino-xiao-ble)
-      - [Nice!Nano Dongle (Nice!Nano v2) ⭐ NEW](#nicenano-dongle-nicenano-v2--new)
+      - [Nice!Nano Dongle (Nice!Nano v2)](#nicenano-dongle-nicenano-v2)
   - [West.yml Configuration](#westyml-configuration)
     - [Remotes Section](#remotes-section)
     - [Projects Section](#projects-section)
@@ -55,7 +55,7 @@ Here is the BOM for this project: [BOM Charybdis 4x6 Wireless](/docs/bom/readme.
 - 1x Seeeduino XIAO BLE (nRF52840) - Dongle central
 - 1x [Prospector Display Module](https://github.com/carrefinho/prospector) - Custom OLED display
 
-**Option 2: Nice!Nano Dongle (Nice!Nano v2)** ⭐ NEW
+**Option 2: Nice!Nano Dongle (Nice!Nano v2)**
 - 1x Nice!Nano v2 (nRF52840) - Dongle central
 - 1x 128x32 OLED Display (SSD1306, I2C) - Generic 0.91" OLED module
 - Uses [zmk-dongle-display](https://github.com/englmaxi/zmk-dongle-display) module
@@ -187,7 +187,7 @@ In dongle mode, a dedicated dongle acts as the central device with a display:
 - Caps Word indicator
 - Fixed brightness (50%) without ambient light sensor
 
-#### Nice!Nano Dongle (Nice!Nano v2) ⭐ NEW
+#### Nice!Nano Dongle (Nice!Nano v2)
 - **Display**: 128x32 OLED (SSD1306) via I2C
 - **Active layer name** with center alignment and scrolling support
 - **Peripheral battery levels** (left + right keyboards)
@@ -473,8 +473,6 @@ Built firmware files are automatically copied to `manual_build/artifacts/output/
 2. Flash `charybdis_left-nice_nano_v2-zmk.uf2` to the left keyboard
 3. Flash `charybdis_right_dongle-nice_nano_v2-zmk.uf2` to the right keyboard
 4. **Important**: Pair the left keyboard to the dongle first, then pair the right keyboard
-
-**Note**: For Nice!Nano dongle setup details and troubleshooting, see [manual_build/NICE_DONGLE_SETUP.md](manual_build/NICE_DONGLE_SETUP.md)
 
 ### Tester Pro Micro (GPIO Testing)
 
