@@ -1,40 +1,40 @@
 ---
 include:
   # Left keyboard - same for all modes (always peripheral)
-  - board: nice_nano_v2
+  - board: nice_nano
     shield: charybdis_left
 
   # Standalone mode - right keyboard is primary/central
-  - board: nice_nano_v2
+  - board: nice_nano
     shield: charybdis_right_standalone
     snippet: studio-rpc-usb-uart
     cmake-args: -DCONFIG_ZMK_STUDIO=y
 
   # Dongle mode - prospector dongle is primary/central with display, right is peripheral
-  - board: nice_nano_v2
+  - board: nice_nano
     shield: dongle_charybdis_right
-  - board: seeeduino_xiao_ble
+  - board: xiao_ble
     shield: dongle_prospector prospector_adapter
     snippet: studio-rpc-usb-uart
     cmake-args: -DCONFIG_ZMK_STUDIO=y
-  - board: seeeduino_xiao_ble
+  - board: xiao_ble
     shield: dongle_bwshockley_prospector dongle_screen
     snippet: studio-rpc-usb-uart
     cmake-args: -DCONFIG_ZMK_STUDIO=y
 
   # Dongle mode - nice_nano dongle with 128x32 OLED display
-  - board: nice_nano_v2
+  - board: nice_nano
     shield: dongle_nice dongle_display
     snippet: studio-rpc-usb-uart
     cmake-args: -DCONFIG_ZMK_STUDIO=y
 
   # Settings reset for both board types
-  - board: nice_nano_v2
+  - board: nice_nano
     shield: settings_reset
-  - board: seeeduino_xiao_ble
+  - board: xiao_ble
     shield: settings_reset
 
   # Tester Pro Micro
-  - board: nice_nano_v2 # Replace with the Pro Micro-compatible board you're using
+  - board: nice_nano # Replace with the Pro Micro-compatible board you're using
     shield: tester_pro_micro
     format: bt
