@@ -18,7 +18,7 @@ manifest:
     import: app/west.yml
   - name: zmk-pmw3610-driver
     remote: badjeff
-    revision: main
+    revision: zmk-0.4
   - name: prospector-zmk-module
     remote: carrefinho
     revision: core/zephyr-4-1
