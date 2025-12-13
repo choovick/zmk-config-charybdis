@@ -22,6 +22,6 @@
 		com-invdir;
 		// horizontal mirror
 		segment-remap;
-		inversion-on;
+		// inversion-on;
 	};
 };
