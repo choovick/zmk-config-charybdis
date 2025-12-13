@@ -24,7 +24,7 @@ manifest:
     revision: core/zephyr-4-1
   - name: zmk-dongle-display
     remote: choovick
-    revision: 4.1support
+    revision: zephyr-4-1
   # zmk-dongle-screen disabled - not compatible with Zephyr 4.1 yet
   # - name: zmk-dongle-screen
   #   remote: bwshockley
