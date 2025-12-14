@@ -6,26 +6,28 @@ manifest:
     url-base: https://github.com/badjeff
   - name: carrefinho
     url-base: https://github.com/carrefinho
-  - name: englmaxi
-    url-base: https://github.com/englmaxi
-  - name: bwshockley
-    url-base: https://github.com/bwshockley
+  - name: choovick
+    url-base: https://github.com/choovick
+  # bwshockley remote disabled - zmk-dongle-screen not compatible with Zephyr 4.1 yet
+  # - name: bwshockley
+  #   url-base: https://github.com/bwshockley
   projects:
   - name: zmk
     remote: zmkfirmware
-    revision: v0.3-branch
+    revision: main
     import: app/west.yml
   - name: zmk-pmw3610-driver
     remote: badjeff
-    revision: zmk-0.3
+    revision: zmk-0.4
   - name: prospector-zmk-module
     remote: carrefinho
-    revision: main
+    revision: core/zephyr-4-1
   - name: zmk-dongle-display
-    remote: englmaxi
-    revision: main
-  - name: zmk-dongle-screen
-    remote: bwshockley
-    revision: main
+    remote: choovick
+    revision: zephyr-4-1
+  # zmk-dongle-screen disabled - not compatible with Zephyr 4.1 yet
+  # - name: zmk-dongle-screen
+  #   remote: bwshockley
+  #   revision: main
   self:
     path: config

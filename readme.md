@@ -1,4 +1,4 @@
-# ZMK CONFIG FOR THE CHARYBDIS 4X6 WIRELESS SPLIT KEYBOARD
+# ZMK CONFIG FOR THE CHARYBDIS 4X6 WIRELESS SPLIT KEYBOARD ZEPHYR 4.1
 
 This configuration supports two modes:
 
@@ -7,10 +7,13 @@ This configuration supports two modes:
 
 ## Table of Contents
 
-- [ZMK CONFIG FOR THE CHARYBDIS 4X6 WIRELESS SPLIT KEYBOARD](#zmk-config-for-the-charybdis-4x6-wireless-split-keyboard)
+- [ZMK CONFIG FOR THE CHARYBDIS 4X6 WIRELESS SPLIT KEYBOARD ZEPHYR 4.1](#zmk-config-for-the-charybdis-4x6-wireless-split-keyboard-zephyr-41)
   - [Table of Contents](#table-of-contents)
   - [BOM](#bom)
     - [Additional Components for Dongle Mode](#additional-components-for-dongle-mode)
+      - [Option 1: Prospector Dongle (Seeeduino XIAO BLE)](#option-1-prospector-dongle-seeeduino-xiao-ble)
+      - [Option 2: Nice!Nano Dongle (Nice!Nano v2)](#option-2-nicenano-dongle-nicenano-v2)
+      - [Option 3: YADS Prospector Dongle (Seeeduino XIAO BLE)](#option-3-yads-prospector-dongle-seeeduino-xiao-ble)
   - [Tester Pro Micro Shield](#tester-pro-micro-shield)
   - [Repository Structure](#repository-structure)
     - [Key Files Explained](#key-files-explained)
@@ -42,9 +45,12 @@ This configuration supports two modes:
     - [Local Build (Manual)](#local-build-manual)
   - [Flashing Firmware](#flashing-firmware)
     - [How to Flash](#how-to-flash)
-    - [Standalone Mode](#standalone-mode-1)
-    - [Dongle Mode](#dongle-mode-1)
+    - [Flashing (Standalone Mode)](#flashing-standalone-mode)
+      - [Flashing checklist (reset settings first)](#flashing-checklist-reset-settings-first)
+    - [Flashing (Dongle Mode)](#flashing-dongle-mode)
+      - [First time or changing modes: reset settings first](#first-time-or-changing-modes-reset-settings-first)
     - [Tester Pro Micro (GPIO Testing)](#tester-pro-micro-gpio-testing)
+      - [For testing a Pro Micro-compatible board](#for-testing-a-pro-micro-compatible-board)
 
 ## BOM
 
@@ -52,24 +58,24 @@ Here is the BOM for this project: [BOM Charybdis 4x6 Wireless](/docs/bom/readme.
 
 ### Additional Components for Dongle Mode
 
-**Option 1: Prospector Dongle (Seeeduino XIAO BLE)**
+#### Option 1: Prospector Dongle (Seeeduino XIAO BLE)
 
 - 1x Seeeduino XIAO BLE (nRF52840) - Dongle central
 - 1x [Prospector Display Module](https://github.com/carrefinho/prospector) - Custom OLED display
 
-**Option 2: Nice!Nano Dongle (Nice!Nano v2)**
+#### Option 2: Nice!Nano Dongle (Nice!Nano v2)
 
 - 1x Nice!Nano v2 (nRF52840) - Dongle central
 - 1x OLED Display (SSD1306, I2C) - Generic OLED module
   - **128x32** (0.91" OLED) - Use `dongle_nice_32` shield
   - **128x64** (0.96" OLED) - Use `dongle_nice_64` shield
-- Uses [zmk-dongle-display](https://github.com/englmaxi/zmk-dongle-display) module
+- Uses [zmk-dongle-display](https://github.com/choovick/zmk-dongle-display) module (fork for Zephyr 4.1)
 
-**Option 3: YADS Prospector Dongle (Seeeduino XIAO BLE)**
+#### Option 3: YADS Prospector Dongle (Seeeduino XIAO BLE)
 
 - 1x Seeeduino XIAO BLE (nRF52840) - Dongle central
 - 1x [Prospector Display Module](https://github.com/carrefinho/prospector) - Custom OLED display
-- Uses [zmk-dongle-screen](https://github.com/bwshockley/zmk-dongle-screen) module (YADS)
+- Uses [zmk-dongle-screen](https://github.com/bwshockley/zmk-dongle-screen) module (YADS) *(currently disabled for Zephyr 4.1 builds)*
 - Alternative firmware for Prospector hardware with different features
 
 ![Wireless Keyboard](/docs/picture/wireless-charybdis.png)
@@ -80,7 +86,7 @@ This repository includes a **ZMK Tester Shield** (`tester_pro_micro`) for troubl
 
 **How to use:**
 
-1. Flash `tester_pro_micro-nice_nano_v2-zmk.uf2` to your controller (see [Building Firmware](#building-firmware))
+1. Flash `tester_pro_micro-nice_nano-zmk.uf2` to your controller (see [Building Firmware](#building-firmware))
 2. Connect the board via USB to your computer
 3. Open a text editor
 4. Connect a switch or wire from any GPIO pin to GND and trigger it
@@ -90,40 +96,40 @@ The tester runs in USB-only mode (no BLE) and includes two physical layouts for 
 
 ## Repository Structure
 
-```
+```text
 zmk-config-charybdis/
-├── config/                          # Main ZMK configuration directory
-│   ├── boards/                      # Shield board definitions
-│   │   └── shields/
-│   │       ├── charybdis/           # Charybdis shield configuration
-│   │       │   ├── charybdis.dtsi                        # Common device tree (keyboard layout, kscan)
-│   │       │   ├── charybdis_layers.h                    # Shared layer definitions
-│   │       │   ├── charybdis_trackball_processors.dtsi   # Shared trackball processing config
-│   │       │   ├── charybdis_right_common.dtsi           # Shared right keyboard hardware config
-│   │       │   ├── charybdis_left.conf                   # Left side Kconfig options (empty)
-│   │       │   ├── charybdis_left.overlay                # Left side device tree overlay
-│   │       │   ├── charybdis_right_standalone.conf       # Right side Kconfig (standalone mode)
-│   │       │   ├── charybdis_right_standalone.overlay    # Right side overlay (standalone mode)
-│   │       │   ├── dongle_charybdis_right.conf           # Symlink → charybdis_right_standalone.conf
-│   │       │   ├── dongle_charybdis_right.overlay        # Right side overlay (dongle mode)
-│   │       │   ├── dongle_common.dtsi                    # Base shared dongle config (all variants)
-│   │       │   ├── dongle_nice_common.dtsi               # Nice!Nano platform common config
-│   │       │   ├── dongle_prospector_common.dtsi         # Prospector platform common config
-│   │       │   ├── dongle_prospector.conf                # Prospector dongle Kconfig options
-│   │       │   ├── dongle_prospector.overlay             # Prospector dongle device tree overlay
-│   │       │   ├── dongle_nice_32.conf                   # Nice!Nano dongle 32px Kconfig options
-│   │       │   ├── dongle_nice_32.overlay                # Nice!Nano dongle 32px device tree overlay
-│   │       │   ├── dongle_nice_64.conf                   # Nice!Nano dongle 64px Kconfig options
-│   │       │   ├── dongle_nice_64.overlay                # Nice!Nano dongle 64px device tree overlay
-│   │       │   ├── Kconfig.defconfig                     # Shield Kconfig definitions
-│   │       │   └── Kconfig.shield                        # Shield Kconfig options
-│   │       └── tester_pro_micro/    # Pro Micro GPIO tester shield
-│   │           ├── Kconfig.shield                        # Shield identifier
-│   │           ├── Kconfig.defconfig                     # Shield defaults (USB-only, no BLE)
-│   │           ├── tester_pro_micro.zmk.yml              # Shield metadata
-│   │           ├── tester_pro_micro.overlay              # GPIO pin definitions (18 pins)
-│   │           ├── tester_pro_micro.keymap               # Pin test macros
-│   │           └── tester_pro_micro-layouts.dtsi         # Physical layouts (pinout + single row)
+├── boards/                          # Module-based shields (Zephyr 4.1+ recommended layout)
+│   └── shields/
+│       ├── charybdis/               # Charybdis shield configuration
+│       │   ├── charybdis.dtsi                        # Common device tree (keyboard layout, kscan)
+│       │   ├── charybdis_layers.h                    # Shared layer definitions
+│       │   ├── charybdis_trackball_processors.dtsi   # Shared trackball processing config
+│       │   ├── charybdis_right_common.dtsi           # Shared right keyboard hardware config
+│       │   ├── charybdis_left.conf                   # Left side Kconfig options (empty)
+│       │   ├── charybdis_left.overlay                # Left side device tree overlay
+│       │   ├── charybdis_right_standalone.conf       # Right side Kconfig (standalone mode)
+│       │   ├── charybdis_right_standalone.overlay    # Right side overlay (standalone mode)
+│       │   ├── dongle_charybdis_right.conf           # Symlink → charybdis_right_standalone.conf
+│       │   ├── dongle_charybdis_right.overlay        # Right side overlay (dongle mode)
+│       │   ├── dongle_common.dtsi                    # Base shared dongle config (all variants)
+│       │   ├── dongle_nice_common.dtsi               # Nice!Nano platform common config
+│       │   ├── dongle_prospector_common.dtsi         # Prospector platform common config
+│       │   ├── dongle_prospector.conf                # Prospector dongle Kconfig options
+│       │   ├── dongle_prospector.overlay             # Prospector dongle device tree overlay
+│       │   ├── dongle_nice_32.conf                   # Nice!Nano dongle 32px Kconfig options
+│       │   ├── dongle_nice_32.overlay                # Nice!Nano dongle 32px device tree overlay
+│       │   ├── dongle_nice_64.conf                   # Nice!Nano dongle 64px Kconfig options
+│       │   ├── dongle_nice_64.overlay                # Nice!Nano dongle 64px device tree overlay
+│       │   ├── Kconfig.defconfig                     # Shield Kconfig definitions
+│       │   └── Kconfig.shield                        # Shield Kconfig options
+│       └── tester_pro_micro/         # Pro Micro GPIO tester shield
+│           ├── Kconfig.shield                        # Shield identifier
+│           ├── Kconfig.defconfig                     # Shield defaults (USB-only, no BLE)
+│           ├── tester_pro_micro.zmk.yml              # Shield metadata
+│           ├── tester_pro_micro.overlay              # GPIO pin definitions (18 pins)
+│           ├── tester_pro_micro.keymap               # Pin test macros
+│           └── tester_pro_micro-layouts.dtsi         # Physical layouts (pinout + single row)
+├── config/                          # Main ZMK configuration directory (keymap + west manifest)
 │   ├── charybdis.conf               # Global ZMK configuration
 │   ├── charybdis.keymap             # Keymap definition file
 │   ├── charybdis.zmk.yml            # ZMK build configuration
@@ -150,6 +156,8 @@ zmk-config-charybdis/
 │   └── picture/                     # Images
 │       └── wireless-charybdis.png
 ├── build.yaml                       # GitHub Actions build configuration
+├── zephyr/
+│   └── module.yml                   # Zephyr module marker (enables discovering boards/shields/)
 └── readme.md                        # This file
 ```
 
@@ -165,7 +173,7 @@ zmk-config-charybdis/
 #### Shield-Specific Files
 
 - **`config/charybdis.keymap`**: Defines all key layers, behaviors, and bindings
-- **`config/charybdis.dtsi`**: Shared device tree definitions (keyboard matrix, kscan, physical layout)
+- **`boards/shields/charybdis/charybdis.dtsi`**: Shared device tree definitions (keyboard matrix, kscan, physical layout)
 - **`charybdis_left.overlay`**: Left side configuration (same for both modes)
 - **`charybdis_right_standalone.overlay`**: Right side for **standalone mode** (processes trackball locally)
 - **`dongle_charybdis_right.overlay`**: Right side for **dongle mode** (forwards trackball to dongle)
@@ -227,6 +235,7 @@ In dongle mode, a dedicated dongle acts as the central device with a display:
 Two variants are available based on OLED display size:
 
 **128x32 OLED (dongle_nice_32):**
+
 - **Display**: 128x32 OLED (SSD1306) via I2C (0.91" module)
 - **Active layer name** with center alignment and scrolling support
 - **Peripheral battery levels** (left + right keyboards)
@@ -237,6 +246,7 @@ Two variants are available based on OLED display size:
 - **Optimized for 32px height**: Bongo cat disabled, modifiers optional
 
 **128x64 OLED (dongle_nice_64):**
+
 - **Display**: 128x64 OLED (SSD1306) via I2C (0.96" module)
 - **Active layer name** with center alignment and scrolling support
 - **Peripheral battery levels** (left + right keyboards)
@@ -267,14 +277,14 @@ remotes:
     url-base: https://github.com/badjeff
   - name: carrefinho
     url-base: https://github.com/carrefinho
-  - name: englmaxi
-    url-base: https://github.com/englmaxi
+  - name: choovick
+    url-base: https://github.com/choovick
 ```
 
 - **`zmkfirmware`**: The main ZMK firmware repository, containing the core ZMK application code
 - **`badjeff`**: Repository containing the PMW3610 trackball driver used for the Charybdis trackball. See [zmk-pmw3610-driver](https://github.com/badjeff/zmk-pmw3610-driver) for full configuration options.
 - **`carrefinho`**: Repository containing the Prospector display module for the dongle. See [prospector-zmk-module](https://github.com/carrefinho/prospector-zmk-module) for display configuration options.
-- **`englmaxi`**: Repository containing the generic OLED display module for dongles. See [zmk-dongle-display](https://github.com/englmaxi/zmk-dongle-display) for display configuration options.
+- **`choovick`**: Fork containing the OLED dongle display module updated for Zephyr 4.1. See [zmk-dongle-display](https://github.com/choovick/zmk-dongle-display).
 
 ### Projects Section
 
@@ -286,13 +296,13 @@ projects:
     import: app/west.yml
   - name: zmk-pmw3610-driver
     remote: badjeff
-    revision: main
+    revision: zmk-0.4
   - name: prospector-zmk-module
     remote: carrefinho
-    revision: main
+    revision: core/zephyr-4-1
   - name: zmk-dongle-display
-    remote: englmaxi
-    revision: main
+    remote: choovick
+    revision: zephyr-4-1
 ```
 
 - **`zmk`**:
@@ -304,19 +314,19 @@ projects:
 - **`zmk-pmw3610-driver`**:
   - **Purpose**: PMW3610 trackball sensor driver for ZMK
   - **Source**: `badjeff` remote
-  - **Version**: `main` branch
+  - **Version**: `zmk-0.4` branch (PMW3610-alt compatible + Zephyr 4.1 updates)
   - **Note**: This driver provides device tree bindings and driver code for the PMW3610 trackball sensor used on the Charybdis right side
 
 - **`prospector-zmk-module`**:
   - **Purpose**: Custom OLED display module for Seeeduino XIAO BLE dongle with ZMK Studio support
   - **Source**: `carrefinho` remote
-  - **Version**: `main` branch
+  - **Version**: `core/zephyr-4-1` branch
   - **Note**: Provides the `prospector_adapter` shield for dongle mode, includes widgets for layer display, battery status, and connection indicators
 
 - **`zmk-dongle-display`**:
   - **Purpose**: Generic OLED display module for Nice!Nano dongle (128x32/128x64 displays)
-  - **Source**: `englmaxi` remote
-  - **Version**: `main` branch
+  - **Source**: `choovick` remote
+  - **Version**: `zephyr-4-1` branch
   - **Note**: Provides the `dongle_display` shield for generic I2C OLED displays (SSD1306). Supports both 128x32 and 128x64 displays with configurable widgets. Use `dongle_nice_32` shield for 32px displays or `dongle_nice_64` shield for 64px displays.
 
 ### Self Section
@@ -342,7 +352,7 @@ The trackball sensitivity can be adjusted at both hardware and software levels.
 
 ### Hardware Sensor Sensitivity (CPI/DPI)
 
-The PMW3610 trackball sensor CPI (Counts Per Inch) is configured in [`config/boards/shields/charybdis/charybdis_right_common.dtsi`](/config/boards/shields/charybdis/charybdis_right_common.dtsi):
+The PMW3610 trackball sensor CPI (Counts Per Inch) is configured in [`boards/shields/charybdis/charybdis_right_common.dtsi`](/boards/shields/charybdis/charybdis_right_common.dtsi):
 
 ```dts
 trackball: trackball@0 {
@@ -361,7 +371,7 @@ trackball: trackball@0 {
 
 ### Software Scaling (Movement Speed)
 
-Software scaling is configured per layer in [`config/boards/shields/charybdis/charybdis_trackball_processors.dtsi`](/config/boards/shields/charybdis/charybdis_trackball_processors.dtsi). The trackball has three different modes with independent sensitivity settings:
+Software scaling is configured per layer in [`boards/shields/charybdis/charybdis_trackball_processors.dtsi`](/boards/shields/charybdis/charybdis_trackball_processors.dtsi). The trackball has three different modes with independent sensitivity settings:
 
 ```dts
 // Normal cursor movement (BASE and POINTER layers)
@@ -417,7 +427,7 @@ This configuration includes support for [ZMK Studio](https://zmk.dev/docs/featur
 
 ### Physical Layout Definition
 
-The physical layout for ZMK Studio is defined in [`config/boards/shields/charybdis/charybdis.dtsi`](/config/boards/shields/charybdis/charybdis.dtsi) in the `charybdis_6col_layout` section. This defines the physical key positions, sizes, and rotations needed for the visual representation in ZMK Studio.
+The physical layout for ZMK Studio is defined in [`boards/shields/charybdis/charybdis.dtsi`](/boards/shields/charybdis/charybdis.dtsi) in the `charybdis_6col_layout` section. This defines the physical key positions, sizes, and rotations needed for the visual representation in ZMK Studio.
 
 ### Enabling/Disabling ZMK Studio
 
@@ -426,7 +436,7 @@ ZMK Studio support is enabled by default via the build configuration in [`build.
 **Standalone mode** - Right keyboard has ZMK Studio:
 
 ```yaml
-- board: nice_nano_v2
+- board: nice_nano
   shield: charybdis_right_standalone
   snippet: studio-rpc-usb-uart
   cmake-args: -DCONFIG_ZMK_STUDIO=y
@@ -435,16 +445,18 @@ ZMK Studio support is enabled by default via the build configuration in [`build.
 **Dongle mode** - Multiple dongles have ZMK Studio:
 
 **Prospector dongle:**
+
 ```yaml
-- board: seeeduino_xiao_ble
+- board: xiao_ble
   shield: dongle_prospector prospector_adapter
   snippet: studio-rpc-usb-uart
   cmake-args: -DCONFIG_ZMK_STUDIO=y
 ```
 
 **Nice!Nano dongles (both 32px and 64px):**
+
 ```yaml
-- board: nice_nano_v2
+- board: nice_nano
   shield: dongle_nice_32 dongle_display  # or dongle_nice_64
   snippet: studio-rpc-usb-uart
   cmake-args: -DCONFIG_ZMK_STUDIO=y
@@ -468,15 +480,15 @@ This combo is defined in [`config/charybdis.keymap`](/config/charybdis.keymap) a
 
 Push changes to your repository and GitHub Actions will automatically build firmware for all configurations defined in [`build.yaml`](/build.yaml). Firmware files will be available in the Actions artifacts as a `firmware.zip` file containing:
 
-- `charybdis_left-nice_nano_v2-zmk.uf2`
-- `charybdis_right_standalone-nice_nano_v2-zmk.uf2`
-- `dongle_charybdis_right-nice_nano_v2-zmk.uf2`
-- `dongle_prospector prospector_adapter-seeeduino_xiao_ble-zmk.uf2`
-- `dongle_nice_32 dongle_display-nice_nano_v2-zmk.uf2`
-- `dongle_nice_64 dongle_display-nice_nano_v2-zmk.uf2`
-- `tester_pro_micro-nice_nano_v2-zmk.uf2`
-- `settings_reset-nice_nano_v2-zmk.uf2`
-- `settings_reset-seeeduino_xiao_ble-zmk.uf2`
+- `charybdis_left-nice_nano-zmk.uf2`
+- `charybdis_right_standalone-nice_nano-zmk.uf2`
+- `dongle_charybdis_right-nice_nano-zmk.uf2`
+- `dongle_prospector prospector_adapter-xiao_ble-zmk.uf2`
+- `dongle_nice_32 dongle_display-nice_nano-zmk.uf2`
+- `dongle_nice_64 dongle_display-nice_nano-zmk.uf2`
+- `tester_pro_micro-nice_nano-zmk.uf2`
+- `settings_reset-nice_nano-zmk.uf2`
+- `settings_reset-xiao_ble-zmk.uf2`
 
 ### Local Build (Manual)
 
@@ -485,15 +497,15 @@ For local building using Docker, see [`manual_build/BUILD_README.md`](/manual_bu
 The interactive build script provides options for:
 
 1. **charybdis_left** - Left keyboard (works with both modes)
-2. **charybdis_right_standalone** - Right keyboard for standalone mode (Nice!Nano v2)
-3. **dongle_charybdis_right** - Right keyboard for dongle mode (Nice!Nano v2)
-4. **dongle_prospector prospector_adapter** - Dongle with display (Seeeduino XIAO BLE)
+2. **charybdis_right_standalone** - Right keyboard for standalone mode (Nice!Nano)
+3. **dongle_charybdis_right** - Right keyboard for dongle mode (Nice!Nano)
+4. **dongle_prospector prospector_adapter** - Dongle with display (XIAO BLE)
 5. **dongle_nice_32 dongle_display** - Nice!Nano dongle with 128x32 OLED
 6. **dongle_nice_64 dongle_display** - Nice!Nano dongle with 128x64 OLED
 7. **tester_pro_micro** - GPIO pin tester for Pro Micro-compatible boards
 8. **settings_reset** - Reset stored settings
 
-⚠️ **Known Issue:** Option 4 (dongle_prospector with prospector_adapter) currently fails in local builds due to module patching requirements. Options 1-3, 5-8 work correctly. **Use GitHub Actions for Prospector dongle builds** or consider using [act](https://github.com/nektos/act) to run the GitHub Actions workflow locally.
+Note: Local builds use a dedicated workspace under `manual_build/west-workspace/` and should behave the same as CI. If a specific configuration fails locally, prefer building in GitHub Actions and then iterate locally once the dependency/workspace is stable.
 
 Built firmware files are automatically copied to `manual_build/artifacts/output/` with descriptive names.
 
@@ -506,47 +518,47 @@ Built firmware files are automatically copied to `manual_build/artifacts/output/
 3. Copy the appropriate `.uf2` file to the USB drive
 4. The board will automatically flash and restart
 
-### Standalone Mode
+### Flashing (Standalone Mode)
 
-**First time or changing modes: Reset settings first**
+#### Flashing checklist (reset settings first)
 
-1. Flash `settings_reset-nice_nano_v2-zmk.uf2` to **both** keyboards
-2. Flash `charybdis_left-nice_nano_v2-zmk.uf2` to the left keyboard
-3. Flash `charybdis_right_standalone-nice_nano_v2-zmk.uf2` to the right keyboard
+1. Flash `settings_reset-nice_nano-zmk.uf2` to **both** keyboards
+2. Flash `charybdis_left-nice_nano-zmk.uf2` to the left keyboard
+3. Flash `charybdis_right_standalone-nice_nano-zmk.uf2` to the right keyboard
 4. The keyboards will automatically pair with each other
 
-### Dongle Mode
+### Flashing (Dongle Mode)
 
-**First time or changing modes: Reset settings first**
+#### First time or changing modes: reset settings first
 
 1. **Flash settings reset and dongle firmware** (choose your dongle type):
 
    a) **Prospector Dongle (Seeeduino XIAO BLE)**:
-      - Flash `settings_reset-nice_nano_v2-zmk.uf2` to **both** keyboards
-      - Flash `settings_reset-seeeduino_xiao_ble-zmk.uf2` to the **dongle**
-      - Flash `dongle_prospector prospector_adapter-seeeduino_xiao_ble-zmk.uf2` to the dongle
+      - Flash `settings_reset-nice_nano-zmk.uf2` to **both** keyboards
+      - Flash `settings_reset-xiao_ble-zmk.uf2` to the **dongle**
+      - Flash `dongle_prospector prospector_adapter-xiao_ble-zmk.uf2` to the dongle
 
    b) **YADS Prospector Dongle (Seeeduino XIAO BLE)**:
-      - Flash `settings_reset-nice_nano_v2-zmk.uf2` to **both** keyboards
-      - Flash `settings_reset-seeeduino_xiao_ble-zmk.uf2` to the **dongle**
-      - Flash `dongle_bwshockley_prospector dongle_screen-seeeduino_xiao_ble-zmk.uf2` to the dongle
+      - Flash `settings_reset-nice_nano-zmk.uf2` to **both** keyboards
+      - Flash `settings_reset-xiao_ble-zmk.uf2` to the **dongle**
+      - Flash `dongle_bwshockley_prospector dongle_screen-xiao_ble-zmk.uf2` to the dongle
 
    c) **Nice!Nano Dongle (Nice!Nano v2)**
-      - Flash `settings_reset-nice_nano_v2-zmk.uf2` to **all three** devices (left, right, dongle)
+      - Flash `settings_reset-nice_nano-zmk.uf2` to **all three** devices (left, right, dongle)
       - Flash the appropriate dongle firmware to the dongle:
-        - **128x32 OLED**: `dongle_nice_32 dongle_display-nice_nano_v2-zmk.uf2`
-        - **128x64 OLED**: `dongle_nice_64 dongle_display-nice_nano_v2-zmk.uf2`
+        - **128x32 OLED**: `dongle_nice_32 dongle_display-nice_nano-zmk.uf2`
+        - **128x64 OLED**: `dongle_nice_64 dongle_display-nice_nano-zmk.uf2`
       - Connect OLED display to dongle via I2C (SDA→Pin 2, SCL→Pin 3)
 
-2. Flash `charybdis_left-nice_nano_v2-zmk.uf2` to the left keyboard
-3. Flash `dongle_charybdis_right-nice_nano_v2-zmk.uf2` to the right keyboard
+2. Flash `charybdis_left-nice_nano-zmk.uf2` to the left keyboard
+3. Flash `dongle_charybdis_right-nice_nano-zmk.uf2` to the right keyboard
 4. **Important**: Pair the left keyboard to the dongle first, then pair the right keyboard
 
 ### Tester Pro Micro (GPIO Testing)
 
-**For testing a Pro Micro-compatible board**
+#### For testing a Pro Micro-compatible board
 
-1. Flash `tester_pro_micro-nice_nano_v2-zmk.uf2` (or your board variant) to the controller
+1. Flash `tester_pro_micro-nice_nano-zmk.uf2` (or your board variant) to the controller
 2. Connect the board via USB to your computer
 3. Open a text editor or terminal
 4. Connect a switch or wire from any GPIO pin to GND and trigger it
