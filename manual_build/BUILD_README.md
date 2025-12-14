@@ -57,9 +57,47 @@ For faster builds, you can specify the configuration directly:
 ./build.py -h
 ```
 
+### Dependency caching (avoid re-downloading)
+
+The script keeps a persistent west workspace in:
+
+- `manual_build/west-workspace/`
+
+This directory is gitignored and contains the checked out dependencies (`zephyr/`, `zmk/`, `modules/`, etc.),
+so subsequent builds do **not** re-download everything.
+
+Useful flags:
+
+- `--clean` (alias: `--clean-deps`): deletes **both**:
+  - `manual_build/west-workspace/` (dependencies; forces a fresh `west update`)
+  - `manual_build/artifacts/` (build outputs)
+
+### How it works (repo stays clean)
+
+This script keeps your git repo clean by using a **separate west workspace** under:
+
+- `manual_build/west-workspace/`
+
+Inside the Docker container it mounts:
+
+- `/repo`: your git repository (read-only source-of-truth for `config/`, `boards/`, `dts/`, and `zephyr/module.yml`)
+- `/workspace`: the west workspace (contains `.west/`, `zephyr/`, `zmk/`, `modules/`, etc.)
+- `/out`: build outputs (written to `manual_build/artifacts/`)
+
+Each build, it copies:
+
+- `/repo/config` → `/workspace/config` (so `west init -l` initializes in the workspace)
+- `/repo/boards`, `/repo/dts`, `/repo/zephyr/module.yml` → `/workspace/zmk-config-charybdis/` (as a proper Zephyr module)
+
+Then it runs:
+
+- `west init -l /workspace/config` (only if needed)
+- `west update` (only if dependencies are missing, e.g. first build or after `--clean`)
+- `west build ... -DZMK_CONFIG=/workspace/config -DZMK_EXTRA_MODULES=/workspace/zmk-config-charybdis`
+
 ## Example Output
 
-```
+```text
 ╔════════════════════════════════════════════╗
 ║   ZMK Local Build Script (Docker)          ║
 ╚════════════════════════════════════════════╝
@@ -119,7 +157,7 @@ The build configuration now includes a nice!nano-based dongle with a 128x32 OLED
 
 The 128x32 OLED configuration automatically disables the bongo cat and modifier widgets to fit the smaller display. The display uses I2C connected to the nice!nano's pro_micro_i2c bus.
 
-To customize the display, edit `config/boards/shields/charybdis/dongle_nice.conf`:
+To customize the display, edit the shield config under `boards/shields/charybdis/` (e.g. `dongle_nice_64.conf`):
 
 - Enable WPM: `CONFIG_ZMK_DONGLE_DISPLAY_WPM=y`
 - Change layer alignment: `CONFIG_ZMK_DONGLE_DISPLAY_LAYER_TEXT_ALIGN="left"` (or "center", "right")
@@ -148,4 +186,4 @@ pip3 install -r requirements.txt
 
 ### Build failures
 
-Check that your `build.yaml` is properly formatted and all shield definitions exist in the `config/boards/shields/` directory.
+Check that your `build.yaml` is properly formatted and that your shields exist under `boards/shields/` (module-based layout).

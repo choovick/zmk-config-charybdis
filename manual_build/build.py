@@ -62,6 +62,24 @@ def get_user_choice(max_choice):
             print("Invalid input. Please enter a number.")
 
 
+def clean_west_workspace(west_workspace_path: Path):
+    """Delete the local west workspace contents so dependencies will be re-fetched."""
+    if not west_workspace_path.exists():
+        return
+
+    # Remove entirely to ensure hidden files like .west/ are cleared.
+    shutil.rmtree(west_workspace_path, ignore_errors=True)
+    west_workspace_path.mkdir(parents=True, exist_ok=True)
+
+
+def clean_artifacts(artifacts_path: Path):
+    """Delete local build artifacts under manual_build/artifacts/."""
+    if not artifacts_path.exists():
+        return
+    shutil.rmtree(artifacts_path, ignore_errors=True)
+    artifacts_path.mkdir(parents=True, exist_ok=True)
+
+
 def build_docker_command(build_config, workspace_path):
     """Construct the Docker build command."""
     board = build_config.get('board')
@@ -73,11 +91,22 @@ def build_docker_command(build_config, workspace_path):
     shield_dir = shield.replace(' ', '-').replace('_', '-')
     build_dir = f"manual_build/artifacts/{shield_dir}"
 
-    # Base Docker command - mount repo root and work from /workspace
-    # (west.yml requires workspace root to be parent of config/)
+    # Keep west-managed checkouts out of the repo root by using a dedicated west workspace directory
+    # under manual_build/ (gitignored). We mount:
+    # - /repo      -> the git repo (source-of-truth for config + custom shields module)
+    # - /workspace -> the west workspace (contains zephyr/zmk/modules checkouts)
+    # - /out       -> build output/artifacts directory
+    west_workspace_host = workspace_path / "manual_build" / "west-workspace"
+    artifacts_host = workspace_path / "manual_build" / "artifacts"
+
+    build_dir_in_container = f"/out/{shield_dir}"
+
+    # Base Docker command
     docker_cmd = [
         "docker", "run", "--rm",
-        "-v", f"{workspace_path}:/workspace",
+        "-v", f"{workspace_path}:/repo",
+        "-v", f"{west_workspace_host}:/workspace",
+        "-v", f"{artifacts_host}:/out",
         "-w", "/workspace",
         "zmkfirmware/zmk-build-arm:stable",
         "sh", "-c"
@@ -85,14 +114,31 @@ def build_docker_command(build_config, workspace_path):
 
     # Build the west commands
     west_commands = []
-    west_commands.append("[ -d .west ] || west init -l config/")
-    west_commands.append("west update")
-    west_commands.append("west zephyr-export")
+    west_commands.append('mkdir -p /workspace /out')
+    # Be explicit about where we operate; west init/update/build must run from the workspace root.
+    west_commands.append('cd /workspace')
+    # Copy config into the workspace so west init -l can initialize *here*.
+    # (If the local manifest repo is outside the workspace, west may initialize in the manifest dir.)
+    west_commands.append('rm -rf /workspace/config && cp -R /repo/config /workspace/config')
+
+    # Copy this repo's custom shields as a proper module inside the workspace (avoid name collision
+    # with the zephyr checkout at /workspace/zephyr).
+    west_commands.append('rm -rf /workspace/zmk-config-charybdis && mkdir -p /workspace/zmk-config-charybdis/zephyr')
+    west_commands.append('if [ -d /repo/boards ]; then cp -R /repo/boards /workspace/zmk-config-charybdis/; fi')
+    west_commands.append('if [ -d /repo/dts ]; then cp -R /repo/dts /workspace/zmk-config-charybdis/; fi')
+    west_commands.append('if [ -f /repo/zephyr/module.yml ]; then cp /repo/zephyr/module.yml /workspace/zmk-config-charybdis/zephyr/module.yml; fi')
+
+    # Init the west workspace at /workspace, using the copied local manifest repo at /workspace/config.
+    west_commands.append('[ -d .west ] || west init -l /workspace/config')
+    # Fetch dependencies only when missing (first run or after --clean).
+    west_commands.append('cd /workspace')
+    west_commands.append('if [ ! -d zmk ]; then west update; fi')
+    west_commands.append('west zephyr-export')
 
     # Construct west build command (quote build_dir in case shield name has spaces)
     # Use --pristine to automatically clean build directory (prevents board mismatch errors)
     build_cmd_parts = [
-        f'west build -s zmk/app -d "{build_dir}" -b {board} --pristine'
+        f'west build -s zmk/app -d "{build_dir_in_container}" -b {board} --pristine'
     ]
 
     # Add snippet if present (BEFORE the -- separator, as a west flag)
@@ -104,6 +150,12 @@ def build_docker_command(build_config, workspace_path):
 
     # Add config directory so ZMK can find custom shields
     build_cmd_parts.append(f"-DZMK_CONFIG=/workspace/config")
+
+    # If this repo has been refactored to the new module-based layout (no config/boards),
+    # expose the repo root as an extra Zephyr module so boards/shields are discovered.
+    # (Inside the container, the repo is mounted at /repo)
+    if (workspace_path / "zephyr" / "module.yml").exists():
+        build_cmd_parts.append(f"-DZMK_EXTRA_MODULES=/workspace/zmk-config-charybdis")
 
     # Add shield (quoted to handle shields with spaces like "prospector_dongle prospector_adapter")
     build_cmd_parts.append(f'-DSHIELD="{shield}"')
@@ -208,6 +260,8 @@ Examples:
                         help='Board name (used with --shield for exact match)')
     parser.add_argument('-l', '--list', action='store_true',
                         help='List available build configurations and exit')
+    parser.add_argument('--clean', '--clean-deps', dest='clean_deps', action='store_true',
+                        help='Delete the local west workspace (manual_build/west-workspace/) and re-download dependencies on the next build')
     
     return parser.parse_args()
 
@@ -299,6 +353,23 @@ def main():
         display_build_options(builds)
         choice = get_user_choice(len(builds))
         selected_build = builds[choice]
+
+    # Ensure the west workspace dir exists on the host (bind-mounted into the container)
+    west_workspace_path = workspace_path / "manual_build" / "west-workspace"
+    west_workspace_path.mkdir(parents=True, exist_ok=True)
+
+    artifacts_path = workspace_path / "manual_build" / "artifacts"
+    artifacts_path.mkdir(parents=True, exist_ok=True)
+
+    # Optional dependency cleanup happens on the host BEFORE running Docker.
+    if args.clean_deps:
+        print("\nCleaning dependency workspace: manual_build/west-workspace/", flush=True)
+        clean_west_workspace(west_workspace_path)
+        print("Dependency workspace cleaned.", flush=True)
+
+        print("Cleaning build artifacts: manual_build/artifacts/", flush=True)
+        clean_artifacts(artifacts_path)
+        print("Build artifacts cleaned.\n", flush=True)
 
     # Build Docker command
     docker_cmd, build_dir = build_docker_command(selected_build, workspace_path)

@@ -2,18 +2,9 @@
 
 # Manual local build artifacts
 artifacts/
+manual_build/west-workspace/
+manual_build/artifacts/
 
-# Build artifacts (if created in root by accident)
-.west/
-zmk/
-zephyr/
-modules/
-bootloader/
-tools/
-zmk-pmw3610-driver/
-prospector-zmk-module/
-zmk-dongle-display/
-zmk-dongle-screen/
 
 # Python
 __pycache__/
