@@ -6,8 +6,8 @@ manifest:
     url-base: https://github.com/badjeff
   - name: carrefinho
     url-base: https://github.com/carrefinho
-  - name: choovick
-    url-base: https://github.com/choovick
+  - name: englmaxi
+    url-base: https://github.com/englmaxi
   # bwshockley remote disabled - zmk-dongle-screen not compatible with Zephyr 4.1 yet
   # - name: bwshockley
   #   url-base: https://github.com/bwshockley
@@ -23,8 +23,8 @@ manifest:
     remote: carrefinho
     revision: core/zephyr-4-1
   - name: zmk-dongle-display
-    remote: choovick
-    revision: 4-1
+    remote: englmaxi
+    revision: zephyr-4.1
   # zmk-dongle-screen disabled - not compatible with Zephyr 4.1 yet
   # - name: zmk-dongle-screen
   #   remote: bwshockley
