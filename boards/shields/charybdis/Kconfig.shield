@@ -10,8 +10,8 @@ config SHIELD_DONGLE_CHARYBDIS_RIGHT
 config SHIELD_DONGLE_PROSPECTOR
 	def_bool $(shields_list_contains,dongle_prospector)
 
-config SHIELD_DONGLE_BWSHOCKLEY_PROSPECTOR
-	def_bool $(shields_list_contains,dongle_bwshockley_prospector)
+config SHIELD_DONGLE_YADS_PROSPECTOR
+	def_bool $(shields_list_contains,dongle_yads_prospector)
 
 config SHIELD_DONGLE_NICE
 	def_bool $(shields_list_contains,dongle_nice)

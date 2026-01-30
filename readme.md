@@ -69,13 +69,13 @@ Here is the BOM for this project: [BOM Charybdis 4x6 Wireless](/docs/bom/readme.
 - 1x OLED Display (SSD1306, I2C) - Generic OLED module
   - **128x32** (0.91" OLED) - Use `dongle_nice_32` shield
   - **128x64** (0.96" OLED) - Use `dongle_nice_64` shield
-- Uses [zmk-dongle-display](https://github.com/choovick/zmk-dongle-display) module (fork for Zephyr 4.1)
+- Uses [zmk-dongle-display](https://github.com/englmaxi/zmk-dongle-display) module
 
 #### Option 3: YADS Prospector Dongle (Seeeduino XIAO BLE)
 
 - 1x Seeeduino XIAO BLE (nRF52840) - Dongle central
 - 1x [Prospector Display Module](https://github.com/carrefinho/prospector) - Custom OLED display
-- Uses [zmk-dongle-screen](https://github.com/bwshockley/zmk-dongle-screen) module (YADS) *(currently disabled for Zephyr 4.1 builds)*
+- Uses [zmk-dongle-screen](https://github.com/janpfischer/zmk-dongle-screen) module (YADS) *(currently disabled - Zephyr 4.1 compatibility pending)*
 - Alternative firmware for Prospector hardware with different features
 
 ![Wireless Keyboard](/docs/picture/wireless-charybdis.png)
@@ -229,6 +229,7 @@ In dongle mode, a dedicated dongle acts as the central device with a display:
 - **Brightness**: Adjustable brightness with keyboard control
 - **System**: Connection status, layer indication, modifiers
 - **Sleep**: Deep sleep support for power saving
+- **Status**: Currently disabled pending Zephyr 4.1 compatibility fix ([issue #29](https://github.com/janpfischer/zmk-dongle-screen/issues/29))
 
 #### Nice!Nano Dongle (Nice!Nano v2)
 
@@ -277,14 +278,17 @@ remotes:
     url-base: https://github.com/badjeff
   - name: carrefinho
     url-base: https://github.com/carrefinho
-  - name: choovick
-    url-base: https://github.com/choovick
+  - name: englmaxi
+    url-base: https://github.com/englmaxi
+  # - name: janpfischer  # disabled - Zephyr 4.1 issues
+  #   url-base: https://github.com/janpfischer
 ```
 
 - **`zmkfirmware`**: The main ZMK firmware repository, containing the core ZMK application code
 - **`badjeff`**: Repository containing the PMW3610 trackball driver used for the Charybdis trackball. See [zmk-pmw3610-driver](https://github.com/badjeff/zmk-pmw3610-driver) for full configuration options.
 - **`carrefinho`**: Repository containing the Prospector display module for the dongle. See [prospector-zmk-module](https://github.com/carrefinho/prospector-zmk-module) for display configuration options.
-- **`choovick`**: Fork containing the OLED dongle display module updated for Zephyr 4.1. See [zmk-dongle-display](https://github.com/choovick/zmk-dongle-display).
+- **`englmaxi`**: Repository containing the OLED dongle display module. See [zmk-dongle-display](https://github.com/englmaxi/zmk-dongle-display).
+- **`janpfischer`**: *(disabled)* Repository containing the YADS (Yet Another Dongle Screen) module. See [zmk-dongle-screen](https://github.com/janpfischer/zmk-dongle-screen).
 
 ### Projects Section
 
@@ -301,8 +305,11 @@ projects:
     remote: carrefinho
     revision: core/zephyr-4-1
   - name: zmk-dongle-display
-    remote: choovick
-    revision: zephyr-4-1
+    remote: englmaxi
+    revision: main
+  # - name: zmk-dongle-screen  # disabled - Zephyr 4.1 issues
+  #   remote: janpfischer
+  #   revision: upgrade-4.1
 ```
 
 - **`zmk`**:
@@ -325,9 +332,16 @@ projects:
 
 - **`zmk-dongle-display`**:
   - **Purpose**: Generic OLED display module for Nice!Nano dongle (128x32/128x64 displays)
-  - **Source**: `choovick` remote
-  - **Version**: `zephyr-4-1` branch
+  - **Source**: `englmaxi` remote
+  - **Version**: `main` branch
   - **Note**: Provides the `dongle_display` shield for generic I2C OLED displays (SSD1306). Supports both 128x32 and 128x64 displays with configurable widgets. Use `dongle_nice_32` shield for 32px displays or `dongle_nice_64` shield for 64px displays.
+
+- **`zmk-dongle-screen`**: *(disabled)*
+  - **Purpose**: YADS (Yet Another Dongle Screen) module for Prospector dongle with ST7789V display
+  - **Source**: `janpfischer` remote
+  - **Version**: `upgrade-4.1` branch
+  - **Status**: Currently disabled pending Zephyr 4.1 compatibility fix ([issue #29](https://github.com/janpfischer/zmk-dongle-screen/issues/29))
+  - **Note**: Provides the `dongle_screen` shield for ST7789V-based displays. Features include WPM widget, ambient light sensor support, brightness control via keyboard, and customizable status screen.
 
 ### Self Section
 
@@ -499,7 +513,7 @@ The interactive build script provides options for:
 1. **charybdis_left** - Left keyboard (works with both modes)
 2. **charybdis_right_standalone** - Right keyboard for standalone mode (Nice!Nano)
 3. **dongle_charybdis_right** - Right keyboard for dongle mode (Nice!Nano)
-4. **dongle_prospector prospector_adapter** - Dongle with display (XIAO BLE)
+4. **dongle_prospector prospector_adapter** - Dongle with Prospector display (XIAO BLE)
 5. **dongle_nice_32 dongle_display** - Nice!Nano dongle with 128x32 OLED
 6. **dongle_nice_64 dongle_display** - Nice!Nano dongle with 128x64 OLED
 7. **tester_pro_micro** - GPIO pin tester for Pro Micro-compatible boards
@@ -541,7 +555,7 @@ Built firmware files are automatically copied to `manual_build/artifacts/output/
    b) **YADS Prospector Dongle (Seeeduino XIAO BLE)**:
       - Flash `settings_reset-nice_nano-zmk.uf2` to **both** keyboards
       - Flash `settings_reset-xiao_ble-zmk.uf2` to the **dongle**
-      - Flash `dongle_bwshockley_prospector dongle_screen-xiao_ble-zmk.uf2` to the dongle
+      - Flash `dongle_yads_prospector dongle_screen-xiao_ble-zmk.uf2` to the dongle
 
    c) **Nice!Nano Dongle (Nice!Nano v2)**
       - Flash `settings_reset-nice_nano-zmk.uf2` to **all three** devices (left, right, dongle)

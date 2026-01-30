@@ -17,9 +17,10 @@ include:
   shield: dongle_prospector prospector_adapter
   snippet: studio-rpc-usb-uart
   cmake-args: -DCONFIG_ZMK_STUDIO=y
-# Disabled: zmk-dongle-screen not compatible with Zephyr 4.1 yet
+# YADS Prospector dongle - disabled pending zmk-dongle-screen Zephyr 4.1 fix
+# See: https://github.com/janpfischer/zmk-dongle-screen/issues/29
 # - board: xiao_ble
-#   shield: dongle_bwshockley_prospector dongle_screen
+#   shield: dongle_yads_prospector dongle_screen
 #   snippet: studio-rpc-usb-uart
 #   cmake-args: -DCONFIG_ZMK_STUDIO=y
 

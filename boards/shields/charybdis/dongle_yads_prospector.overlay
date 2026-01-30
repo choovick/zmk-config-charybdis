@@ -1,0 +1,6 @@
+#include "dongle_prospector.overlay"
+
+// Disable input split listener - zmk-dongle-screen doesn't support trackball forwarding
+&input_split_listener {
+	status = "disabled";
+};

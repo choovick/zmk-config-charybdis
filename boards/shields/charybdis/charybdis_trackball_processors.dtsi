@@ -29,6 +29,6 @@
     \
     move { \
         layers = <BASE POINTER>; \
-        input-processors = <&zip_xy_scaler 7 6>; \
+        input-processors = <&zip_xy_scaler 3 2>; \
     };
 

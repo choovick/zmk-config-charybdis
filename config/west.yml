@@ -8,11 +8,9 @@ manifest:
     url-base: https://github.com/carrefinho
   - name: englmaxi
     url-base: https://github.com/englmaxi
-  - name: choovick
-    url-base: https://github.com/choovick
-  # bwshockley remote disabled - zmk-dongle-screen not compatible with Zephyr 4.1 yet
-  # - name: bwshockley
-  #   url-base: https://github.com/bwshockley
+  # janpfischer remote disabled - zmk-dongle-screen has Zephyr 4.1 compatibility issues
+  # - name: janpfischer
+  #   url-base: https://github.com/janpfischer
   projects:
   - name: zmk
     remote: zmkfirmware
@@ -25,11 +23,12 @@ manifest:
     remote: carrefinho
     revision: core/zephyr-4-1
   - name: zmk-dongle-display
-    remote: choovick
-    revision: fixes-improvements
-  # zmk-dongle-screen disabled - not compatible with Zephyr 4.1 yet
+    remote: englmaxi
+    revision: main
+  # zmk-dongle-screen disabled - Zephyr 4.1 compatibility issues pending upstream fix
+  # See: https://github.com/janpfischer/zmk-dongle-screen/issues/29
   # - name: zmk-dongle-screen
-  #   remote: bwshockley
-  #   revision: main
+  #   remote: janpfischer
+  #   revision: upgrade-4.1
   self:
     path: config
