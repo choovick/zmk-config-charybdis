@@ -21,7 +21,7 @@ manifest:
     revision: zmk-0.4
   - name: prospector-zmk-module
     remote: carrefinho
-    revision: core/zephyr-4-1
+    revision: feat/new-status-screens
   - name: zmk-dongle-display
     remote: englmaxi
     revision: main
