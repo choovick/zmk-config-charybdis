@@ -58,7 +58,7 @@
       compatible = "zmk,behavior-tap-dance";
       #binding-cells = <0>;
       tapping-term-ms = <200>;
-      bindings = <&mo POINTER>, <&kp LC(LS(LA(LG(Y))))>;
+      bindings = <&mo POINTER>, <&kp LC(LA(LG(Y)))>;
     };
 
     // Home row mods - Left hand
