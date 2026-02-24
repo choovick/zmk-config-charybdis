@@ -53,12 +53,12 @@
       bindings = <&kp LGUI>, <&kp LC(B)>;
     };
 
-    // Hold: POINTER layer. Double-tap: Ctrl+Shift+Alt+Cmd+Y
-    pointer_dt: pointer_dt {
+    // Tap/hold Alt, double-tap Ctrl+Shift+Z
+    lalt_dt: lalt_dt {
       compatible = "zmk,behavior-tap-dance";
       #binding-cells = <0>;
       tapping-term-ms = <200>;
-      bindings = <&mo POINTER>, <&kp LC(LS(Z))>;
+      bindings = <&kp LALT>, <&kp LC(LS(Z))>;
     };
 
     // Home row mods - Left hand
@@ -196,7 +196,7 @@
     &kp LSFT      &hml LGUI Z   &hml LALT X   &hml LCTRL C  &hml LSHIFT V &kp B             &kp N         &hmr RSHIFT M &hmr RCTRL COMMA &hmr RALT DOT &hmr RGUI FSLH &kp RSFT
 // ╰─────────────┴─────────────┴─────────────┴─────────────┴─────────────┴─────────────╯   ╰─────────────┴─────────────┴─────────────┴─────────────┴─────────────┴─────────────╯
 //               ╭─────────────┬─────────────┬─────────────┬─────────────┬─────────────╮   ╭─────────────┬─────────────┬─────────────╮
-                  &kp LALT      &mo LOWER     &pointer_dt   &gui_ctrlb    &kp LCTRL         &kp RET      &blt SYMBOLS SPACE  &blt RAISE BSPC
+                  &lalt_dt      &mo LOWER     &mo POINTER   &gui_ctrlb    &kp LCTRL         &kp RET      &blt SYMBOLS SPACE  &blt RAISE BSPC
 //               ╰─────────────┴─────────────┴─────────────┴─────────────┴─────────────╯   ╰─────────────┴─────────────┴─────────────╯
       >;
     };
