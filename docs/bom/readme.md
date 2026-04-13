@@ -22,6 +22,18 @@
 | Li-Po Battery 801350 500mAh-150mAh          | 2       |
 | Square Hole IC Sockets 24 pin wide          | 2       |
 
+### Optional RGB Parts (SK6812 Per-Key)
+
+If you want RGB lighting, add the following optional parts (based on BastardKB's original `electronics_bom.md`):
+
+| Part name                      | Amount (4x6) | Notes                  |
+| ----------------------------- | ------------ | ---------------------- |
+| SK6812 Mini-E LEDs            | 58           | Optional RGB LEDs      |
+| Capacitor, 1uF, size 1206     | 4            | Optional, for RGB data/power stability |
+| Resistor, 330 Ohms, size 1206 | 4            | Optional, series resistor for RGB data path |
+| Wires (28 AWG recommended)    | As needed    | Optional, black/red/color |
+| Ribbon cables Flexstrip       | 6            | Optional, if used by your assembly approach |
+
 ## PCB
 
 | Part name            | Amount | Link                                                      |

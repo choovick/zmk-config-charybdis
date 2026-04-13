@@ -3,8 +3,10 @@
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/modifiers.h>
 #include <dt-bindings/zmk/outputs.h>
 #include <dt-bindings/zmk/pointing.h>
+#include <dt-bindings/zmk/rgb.h>
 
 / {
     chosen { zmk,physical-layout = &charybdis_6col_layout; };
@@ -86,6 +88,15 @@
       hold-trigger-key-positions = <0 1 2 3 4 5 12 13 14 15 16 17 24 25 26 27 28 29 36 37 38 39 40 41 48 49 50 51 52>; // Left side keys
       hold-trigger-on-release;
     };
+
+    // RGB controls routed globally so split halves stay in sync.
+    rgb_loc: rgbloc {
+      compatible = "zmk,behavior-rgb-local";
+      #binding-cells = <2>;
+    };
+
+    // RGB controls: dedicated direct bindings.
+
   };
 
   macros {
@@ -248,9 +259,9 @@
 // ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤   ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤
     &trans        &trans       &CAC W        &kp C_VOL_UP  &kp LG(MINUS) &kp LG(EQUAL)     &bt BT_SEL 0  &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &kp F11       &kp F12
 // ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤   ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤
-    &trans        &none         &kp C_PREV    &kp C_PP      &kp C_NEXT    &kp LG(N0)        &kp F23       &kp F24       &none         &none         &none         &bootloader
+    &trans        &none         &kp C_PREV    &kp C_PP      &kp C_NEXT    &kp LG(N0)        &kp F23       &kp F24       &rgb_loc RGB_BRI &rgb_loc RGB_BRD &rgb_loc RGB_EFF &bootloader
 // ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤   ├─────────────┼─────────────┼─────────────┼─────────────┼─────────────┼─────────────┤
-    &trans        &none         &none         &kp C_VOL_DN  &none         &none             &bt BT_CLR    &bt BT_CLR_ALL &none        &none         &none         &none
+    &trans        &none         &none         &kp C_VOL_DN  &none         &none             &bt BT_CLR    &bt BT_CLR_ALL &rgb_loc RGB_ON &rgb_loc RGB_OFF &rgb_loc RGB_HUI &trans
 // ╰─────────────┴─────────────┴─────────────┴─────────────┴─────────────┴─────────────╯   ╰─────────────┴─────────────┴─────────────┴─────────────┴─────────────┴─────────────╯
 //               ╭─────────────┬─────────────┬─────────────┬─────────────┬─────────────╮   ╭─────────────┬─────────────┬─────────────╮
                     &trans        &trans        &trans        &trans        &trans            &trans        &trans        &trans

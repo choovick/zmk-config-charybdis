@@ -41,6 +41,7 @@
             low-power-enable;
         };
     };
+
 };
 
 &spi0 {
@@ -75,3 +76,6 @@
     };
 };
 
+#define CHARYBDIS_RGB_CHAIN_LENGTH 27
+#include "charybdis_rgb.dtsi"
+#undef CHARYBDIS_RGB_CHAIN_LENGTH

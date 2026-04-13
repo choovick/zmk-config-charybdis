@@ -10,3 +10,7 @@
 		, <&pro_micro 8 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>
 		;
 };
+
+#define CHARYBDIS_RGB_CHAIN_LENGTH 29
+#include "charybdis_rgb.dtsi"
+#undef CHARYBDIS_RGB_CHAIN_LENGTH

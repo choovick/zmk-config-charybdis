@@ -31,6 +31,10 @@ This configuration supports two modes:
     - [Projects Section](#projects-section)
     - [Self Section](#self-section)
   - [Keymap](#keymap)
+  - [RGB LED Configuration](#rgb-led-configuration)
+    - [RGB Off/On Reliability](#rgb-offon-reliability)
+    - [Change LED Data Pin](#change-led-data-pin)
+    - [Change LED Count Per Side](#change-led-count-per-side)
   - [Trackball Sensitivity Configuration](#trackball-sensitivity-configuration)
     - [Hardware Sensor Sensitivity (CPI/DPI)](#hardware-sensor-sensitivity-cpidpi)
     - [Software Scaling (Movement Speed)](#software-scaling-movement-speed)
@@ -55,6 +59,8 @@ This configuration supports two modes:
 ## BOM
 
 See the full [Bill of Materials](/docs/bom/readme.md) for electronics, PCBs, fabrication files (ready-to-upload gerbers for PCBWay/JLCPCB), and 3D print files.
+
+RGB parts (SK6812 LEDs, 1uF capacitors, and 330 Ohm resistors) are documented there as **optional**.
 
 ### Additional Components for Dongle Mode
 
@@ -98,14 +104,16 @@ The tester runs in USB-only mode (no BLE) and includes two physical layouts for 
 
 ```text
 zmk-config-charybdis/
+├── CMakeLists.txt                   # Module CMake entry (adds custom app sources)
 ├── boards/                          # Module-based shields (Zephyr 4.1+ recommended layout)
 │   └── shields/
 │       ├── charybdis/               # Charybdis shield configuration
 │       │   ├── charybdis.dtsi                        # Common device tree (keyboard layout, kscan)
 │       │   ├── charybdis_layers.h                    # Shared layer definitions
 │       │   ├── charybdis_trackball_processors.dtsi   # Shared trackball processing config
+│       │   ├── charybdis_rgb.dtsi                    # Shared RGB underglow/per-key LED config
 │       │   ├── charybdis_right_common.dtsi           # Shared right keyboard hardware config
-│       │   ├── charybdis_left.conf                   # Left side Kconfig options (empty)
+│       │   ├── charybdis_left.conf                   # Left side Kconfig options (left-specific only)
 │       │   ├── charybdis_left.overlay                # Left side device tree overlay
 │       │   ├── charybdis_right_standalone.conf       # Right side Kconfig (standalone mode)
 │       │   ├── charybdis_right_standalone.overlay    # Right side overlay (standalone mode)
@@ -129,6 +137,10 @@ zmk-config-charybdis/
 │           ├── tester_pro_micro.overlay              # GPIO pin definitions (18 pins)
 │           ├── tester_pro_micro.keymap               # Pin test macros
 │           └── tester_pro_micro-layouts.dtsi         # Physical layouts (pinout + single row)
+├── dts/                             # Local devicetree extensions
+│   └── bindings/
+│       └── behaviors/
+│           └── zmk,behavior-rgb-local.yaml           # Custom RGB behavior binding
 ├── config/                          # Main ZMK configuration directory (keymap + west manifest)
 │   ├── charybdis.conf               # Global ZMK configuration
 │   ├── charybdis.keymap             # Keymap definition file
@@ -138,6 +150,9 @@ zmk-config-charybdis/
 ├── manual_build/                    # Local build scripts
 │   ├── build.py                     # Interactive build script
 │   └── BUILD_README.md              # Build instructions
+├── src/                             # Local ZMK module source extensions
+│   └── behaviors/
+│       └── behavior_rgb_local.c     # Event-source RGB behavior for split/dongle mode
 ├── docs/                            # Documentation
 │   ├── bom/                         # Bill of Materials
 │   │   ├── stl/                     # 3D Print files
@@ -157,7 +172,7 @@ zmk-config-charybdis/
 │       └── wireless-charybdis.png
 ├── build.yaml                       # GitHub Actions build configuration
 ├── zephyr/
-│   └── module.yml                   # Zephyr module marker (enables discovering boards/shields/)
+│   └── module.yml                   # Zephyr module marker (board_root, dts_root, cmake)
 └── readme.md                        # This file
 ```
 
@@ -167,8 +182,13 @@ zmk-config-charybdis/
 
 - **`charybdis_layers.h`**: Layer definitions (BASE, POINTER, LOWER, RAISE, SYMBOLS, SCROLL, SNIPING) used across all shields
 - **`charybdis_trackball_processors.dtsi`**: Shared trackball input processing configurations (snipe/scroll/move modes)
+- **`charybdis_rgb.dtsi`**: Shared RGB LED bus/device configuration (SPI, LED strip node, `zmk,underglow` chosen node)
 - **`charybdis_right_common.dtsi`**: Common hardware config for both right keyboard variants (GPIO, SPI, trackball device)
 - **`dongle_charybdis_right.conf`**: Symlink to `charybdis_right_standalone.conf` (identical hardware config)
+- **`src/behaviors/behavior_rgb_local.c`**: Custom RGB behavior using event-source locality so RGB controls execute on the half that generated the key event (useful in dongle/split mode)
+- **`dts/bindings/behaviors/zmk,behavior-rgb-local.yaml`**: Devicetree binding for the custom RGB behavior
+- **`CMakeLists.txt`**: Registers the custom behavior source into the ZMK `app` target
+- **`zephyr/module.yml`**: Exposes board/dts roots and CMake entry for this module
 
 #### Shield-Specific Files
 
@@ -359,6 +379,62 @@ Can be updated at [/config/charybdis.keymap](/config/charybdis.keymap) and rende
 Generated with [Keymap Drawer](https://github.com/caksoylar/keymap-drawer-web/)
 
 ![Keymap](/docs/keymap/keymap.svg)
+
+## RGB LED Configuration
+
+### RGB Off/On Reliability
+
+If LEDs turn off but do not turn back on reliably with `RGB_ON` (until reset), set:
+
+- [`config/charybdis.conf`](/config/charybdis.conf)
+
+```kconfig
+CONFIG_ZMK_RGB_UNDERGLOW_EXT_POWER=n
+```
+
+This decouples RGB commands from external power rail control.  
+With this set to `n`, `RGB_ON/OFF` controls underglow state only, which is more reliable on some builds/hardware combinations.
+
+Quick behavior summary:
+
+- `CONFIG_ZMK_RGB_UNDERGLOW_EXT_POWER=y` (ZMK upstream default): `RGB_ON/OFF` can also toggle external power for LEDs. This can save more battery, but some setups may fail to re-enable LEDs cleanly until reset.
+- `CONFIG_ZMK_RGB_UNDERGLOW_EXT_POWER=n` (current setting in this repo): `RGB_ON/OFF` only changes underglow state/effect in software. This is usually more reliable for turning LEDs back on, with a small battery tradeoff compared to hard power-cut behavior.
+
+### Change LED Data Pin
+
+To change the RGB LED data pin, edit:
+
+- [`boards/shields/charybdis/charybdis_rgb.dtsi`](/boards/shields/charybdis/charybdis_rgb.dtsi)
+
+Find these lines and update the `NRF_PSEL(SPIM_MOSI, <port>, <pin>)` value:
+
+```dts
+spi3_default: spi3_default {
+    group1 {
+        psels = <NRF_PSEL(SPIM_MOSI, 1, 13)>;
+    };
+};
+```
+
+```dts
+spi3_sleep: spi3_sleep {
+    group1 {
+        psels = <NRF_PSEL(SPIM_MOSI, 1, 13)>;
+        low-power-enable;
+    };
+};
+```
+
+Current default is Pro Micro `D15` on nice!nano v2 (`P1.13`).
+
+### Change LED Count Per Side
+
+The per-side LED count is set where the shared RGB include is used:
+
+- Left side: [`boards/shields/charybdis/charybdis_left.overlay`](/boards/shields/charybdis/charybdis_left.overlay)  
+  `#define CHARYBDIS_RGB_CHAIN_LENGTH 29`
+- Right side: [`boards/shields/charybdis/charybdis_right_common.dtsi`](/boards/shields/charybdis/charybdis_right_common.dtsi)  
+  `#define CHARYBDIS_RGB_CHAIN_LENGTH 27`
 
 ## Trackball Sensitivity Configuration
 

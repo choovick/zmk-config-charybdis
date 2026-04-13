@@ -1,5 +1,6 @@
 name: zmk-config-charybdis
 build:
+  cmake: .
   settings:
     board_root: .
     dts_root: .
