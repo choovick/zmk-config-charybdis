@@ -46,5 +46,5 @@
     \
     move { \
         layers = <BASE NAV SYM ADJ MOUSE>; \
-        input-processors = <&pointer_accel>, <&trackball_temp_layer MOUSE 350>; \
+        input-processors = <&pointer_accel>, <&trackball_temp_layer MOUSE 450>; \
     };
