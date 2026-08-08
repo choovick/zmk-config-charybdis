@@ -13,6 +13,7 @@ include:
 # Dongle mode - prospector dongle is primary/central with display, right is peripheral
 - board: nice_nano//zmk
   shield: dongle_charybdis_right
+  snippet: zmk-usb-logging
 - board: xiao_ble//zmk
   shield: dongle_prospector prospector_adapter
   snippet: studio-rpc-usb-uart
