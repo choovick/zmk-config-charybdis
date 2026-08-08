@@ -9,6 +9,7 @@ manual_build/artifacts/
 # Python
 __pycache__/
 *.pyc
+manual_build/.venv/
 
 # editors
 .vscode/

@@ -5,6 +5,7 @@ Reads build.yaml and builds selected configuration using Docker
 """
 
 import yaml
+import re
 import subprocess
 import sys
 import os
@@ -208,9 +209,11 @@ def copy_firmware_to_output(workspace_path, build_dir, shield_name, board_name):
     source_file = workspace_path / build_dir / "zephyr" / "zmk.uf2"
 
     # Generate output filename: shield-board.uf2
-    # Replace underscores with hyphens for consistency
-    shield_clean = shield_name.replace('_', '-')
-    board_clean = board_name.replace('_', '-')
+    # Replace underscores with hyphens for consistency, and collapse any
+    # board qualifier separators (e.g. "nice_nano//zmk") so the result is a
+    # single filename component, not a path with subdirectories.
+    shield_clean = re.sub(r'[/_]+', '-', shield_name)
+    board_clean = re.sub(r'[/_]+', '-', board_name)
     output_filename = f"{shield_clean}-{board_clean}.uf2"
     output_file = output_dir / output_filename
 
