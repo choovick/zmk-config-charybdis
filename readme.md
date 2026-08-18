@@ -1,3 +1,5 @@
+
+
 # ZMK CONFIG FOR THE CHARYBDIS 4X6 WIRELESS SPLIT KEYBOARD ZEPHYR 4.1
 
 This configuration supports two modes:
@@ -303,7 +305,7 @@ projects:
     revision: zmk-0.4
   - name: prospector-zmk-module
     remote: carrefinho
-    revision: core/zephyr-4-1
+    revision: feat/new-status-screens
   - name: zmk-dongle-display
     remote: englmaxi
     revision: main
@@ -327,7 +329,7 @@ projects:
 - **`prospector-zmk-module`**:
   - **Purpose**: Custom OLED display module for Seeeduino XIAO BLE dongle with ZMK Studio support
   - **Source**: `carrefinho` remote
-  - **Version**: `core/zephyr-4-1` branch
+  - **Version**: `feat/new-status-screens` branch
   - **Note**: Provides the `prospector_adapter` shield for dongle mode, includes widgets for layer display, battery status, and connection indicators
 
 - **`zmk-dongle-display`**:
