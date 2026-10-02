@@ -15,6 +15,8 @@
 #include <dt-bindings/zmk/rgb.h>
 #include <zmk/behavior.h>
 #include <zmk/rgb_underglow.h>
+#include <zmk/stdlib.h>
+#include <zmk/workqueue.h>
 
 #if IS_ENABLED(CONFIG_ZMK_SPLIT) && IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
 #include <zmk/split/central.h>
@@ -204,21 +206,83 @@ static int apply_local_rgb_state(const struct rgb_sync_state *target) {
     return 0;
 }
 
-static int broadcast_rgb_state(const char *behavior_dev, struct zmk_behavior_binding_event event,
-                               const struct rgb_sync_state *state) {
+/* Deferred work items for the two split code paths in this behavior.
+ *
+ * Both run in contexts where blocking or heavy work is fatal:
+ *  - broadcast_rgb_state() is called from keymap processing (system workqueue
+ *    for peripheral-originated key events), and zmk_split_central_invoke_behavior()
+ *    can block up to 100ms per peripheral waiting for split run queue space.
+ *    While the system workqueue is blocked, key events from ALL peripherals
+ *    stall and their event queue overflows - the keyboard appears dead.
+ *  - The sync-apply command arrives in the peripheral's GATT write callback,
+ *    which executes in the Bluetooth RX thread; applying RGB state there
+ *    stalls the most latency-critical BLE thread.
+ *
+ * Both are deferred to the low-priority workqueue and coalesced so rapid
+ * adjustments only apply/broadcast the latest state.
+ */
+
+static struct k_work sync_apply_work;
+static bool sync_apply_work_initialized;
+static uint32_t pending_apply_packed;
+
+static void sync_apply_work_handler(struct k_work *work) {
+    ARG_UNUSED(work);
+
+    struct rgb_sync_state incoming = {0};
+    if (unpack_rgb_state(pending_apply_packed, &incoming) < 0) {
+        return;
+    }
+
+    central_model_state = incoming;
+    apply_local_rgb_state(&incoming);
+}
+
 #if IS_ENABLED(CONFIG_ZMK_SPLIT) && IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
+
+#define RGB_SYNC_BROADCAST_DELAY_MS 25
+
+static struct k_work_delayable sync_broadcast_work;
+static bool sync_broadcast_work_initialized;
+static uint32_t pending_broadcast_packed;
+static char sync_behavior_dev[32];
+static struct zmk_behavior_binding_event sync_event;
+
+static void sync_broadcast_work_handler(struct k_work *work) {
+    ARG_UNUSED(work);
+
     struct zmk_behavior_binding sync_binding = {
-        .behavior_dev = behavior_dev,
+        .behavior_dev = sync_behavior_dev,
         .param1 = RGB_LOCAL_SYNC_APPLY_CMD,
-        .param2 = pack_rgb_state(state),
+        .param2 = pending_broadcast_packed,
     };
 
     for (uint8_t source = 0; source < ZMK_SPLIT_CENTRAL_PERIPHERAL_COUNT; source++) {
-        int err = zmk_split_central_invoke_behavior(source, &sync_binding, event, true);
+        int err = zmk_split_central_invoke_behavior(source, &sync_binding, sync_event, true);
         if (err < 0) {
             LOG_DBG("RGB sync send to source %d failed (%d)", source, err);
         }
     }
+}
+
+#endif /* IS_ENABLED(CONFIG_ZMK_SPLIT) && IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL) */
+
+static int broadcast_rgb_state(const char *behavior_dev, struct zmk_behavior_binding_event event,
+                               const struct rgb_sync_state *state) {
+#if IS_ENABLED(CONFIG_ZMK_SPLIT) && IS_ENABLED(CONFIG_ZMK_SPLIT_ROLE_CENTRAL)
+    if (!sync_broadcast_work_initialized) {
+        k_work_init_delayable(&sync_broadcast_work, sync_broadcast_work_handler);
+        sync_broadcast_work_initialized = true;
+    }
+
+    strlcpy(sync_behavior_dev, behavior_dev, sizeof(sync_behavior_dev));
+    sync_event = event;
+    pending_broadcast_packed = pack_rgb_state(state);
+
+    /* The delay coalesces rapid adjustments (e.g. holding a hue key) into a
+       single broadcast of the latest state. */
+    k_work_reschedule_for_queue(zmk_workqueue_lowprio_work_q(), &sync_broadcast_work,
+                                K_MSEC(RGB_SYNC_BROADCAST_DELAY_MS));
 #else
     ARG_UNUSED(behavior_dev);
     ARG_UNUSED(event);
@@ -283,14 +347,17 @@ static int on_keymap_binding_pressed(struct zmk_behavior_binding *binding,
     ensure_model_initialized();
 
     if (binding->param1 == RGB_LOCAL_SYNC_APPLY_CMD) {
-        struct rgb_sync_state incoming = {0};
-        int err = unpack_rgb_state(binding->param2, &incoming);
-        if (err < 0) {
-            return err;
+        /* Arrives in the peripheral's GATT write callback (Bluetooth RX
+           thread); defer the apply to the low-priority workqueue. */
+        pending_apply_packed = binding->param2;
+
+        if (!sync_apply_work_initialized) {
+            k_work_init(&sync_apply_work, sync_apply_work_handler);
+            sync_apply_work_initialized = true;
         }
 
-        central_model_state = incoming;
-        return apply_local_rgb_state(&incoming);
+        k_work_submit_to_queue(zmk_workqueue_lowprio_work_q(), &sync_apply_work);
+        return 0;
     }
 
     refresh_model_from_local_if_available();
