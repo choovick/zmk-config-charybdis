@@ -178,7 +178,9 @@ zmk-config-charybdis/
 │   │   ├── keymap.svg               # Generated: Visual keymap (created by render.sh)
 │   │   └── render.sh                # Script to parse keymap and generate SVG
 │   └── picture/                     # Images
-│       └── wireless-charybdis.png
+│       ├── wireless-charybdis.png
+│       ├── charybdis-rgb-underglow.jpg
+│       └── led-power-switch-mod.jpg
 ├── build.yaml                       # GitHub Actions build configuration
 ├── zephyr/
 │   └── module.yml                   # Zephyr module marker (board_root, dts_root, cmake)
@@ -405,6 +407,8 @@ Generated with [Keymap Drawer](https://github.com/caksoylar/keymap-drawer-web/)
 
 RGB underglow is **opt-in via shield variants**. The base keyboard shields assume no LED hardware; the `_rgb` variants add the WS2812/SK6812 strip (spi3 MOSI on `P1.13`, nice!nano `D15`):
 
+![Charybdis with RGB underglow installed](/docs/picture/charybdis-rgb-underglow.jpg)
+
 | Base shield (no LEDs) | RGB variant | Side / mode |
 |---|---|---|
 | `charybdis_left` | `charybdis_left_rgb` | Left (both modes) |
@@ -419,6 +423,8 @@ With an `_rgb` build, underglow starts on at boot in the rainbow (spectrum) effe
 > **Software "off" is not power off (right/trackball side).** On the right half, the LED strip's power rail is shared with the trackball, and the nice!nano has no dedicated power-management pin for the LEDs. ZMK's hard power cut (`EXT_POWER`) would also kill the trackball — which is why this repo sets `CONFIG_ZMK_RGB_UNDERGLOW_EXT_POWER=n` (see [RGB Off/On Reliability](#rgb-offon-reliability)). The consequence: `RGB_OFF` only stops the data signal, and WS2812/SK6812 LEDs keep drawing significant idle current per LED (driver IC quiescent current) even when fully "off", noticeably shortening battery life.
 >
 > If battery life matters, the recommended mod is a **physical switch on the LED power wire** — between the controller and the strip only, not the shared rail, so the trackball keeps running while the LEDs are hard-powered off.
+>
+> ![Slide switch wired into the LED power line on the PCB](/docs/picture/led-power-switch-mod.jpg)
 
 ### RGB Off/On Reliability
 
