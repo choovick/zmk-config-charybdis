@@ -41,18 +41,26 @@
 
 / {
     behaviors {
-        alt_bracket: alt_bracket {
+        alt_noshift: alt_noshift {
             compatible = "zmk,behavior-mod-morph";
             #binding-cells = <0>;
-            bindings = <&kp RBKT>, <&kp RBRC>;
-            mods = <(MOD_LSFT|MOD_RSFT)>;
+            bindings = <&kp LBKT>, <&kp RBKT>;
+            mods = <(MOD_LALT|MOD_RALT)>;
+        };
+
+        alt_shift: alt_shift {
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp LBRC>, <&kp RBRC>;
+            mods = <(MOD_LALT|MOD_RALT)>;
         };
 
         bracket_morph: bracket_morph {
             compatible = "zmk,behavior-mod-morph";
             #binding-cells = <0>;
-            bindings = <&kp LBKT>, <&alt_bracket>;
-            mods = <(MOD_LALT|MOD_RALT)>;
+            bindings = <&alt_noshift>, <&alt_shift>;
+            mods = <(MOD_LSFT|MOD_RSFT)>;
+            keep-mods = <(MOD_LSFT|MOD_RSFT)>;
         };
     };
 
