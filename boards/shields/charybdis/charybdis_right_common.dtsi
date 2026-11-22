@@ -65,10 +65,6 @@
         evt-type = <INPUT_EV_REL>;
         x-input-code = <INPUT_REL_X>;
         y-input-code = <INPUT_REL_Y>;
-        /* force-awake intentionally NOT set: in zmk-pmw3610-driver (zmk-0.4) the
-           activity-state listener that is supposed to release force-awake on IDLE
-           matches compatible "pixart,pmw3610" while the device is "pixart,pmw3610-alt",
-           so it never runs and the sensor stays in full-rate mode forever, streaming
-           jitter/dust motion over split 24/7. Normal downshift is used instead. */
+        /* default force-awake: off; driver never releases it (compat mismatch in idle listener) */
     };
 };
